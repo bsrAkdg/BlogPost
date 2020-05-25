@@ -83,15 +83,14 @@
     <string name="write_a_blog_title">Write a blog title...</string>
     <string name="log_out">Log out</string>
     <string name="the_title_of_a_blog">The Title of a Blog</string>
-    <string name="touch_to_change_image">Touch to change image</string>
-    <string name="this_is_some_blog_content">This is some blog content</string>
-    <string name="the_title_of_a_blog">The Title of a Blog</string>
     <string name="this_is_some_blog_content">This is some blog content</string>
     <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>
     <string name="no_more_results">No more results...</string>
     <string name="edit">Edit</string>
-    <string name="publish">Publish</string>
     <string name="save">Save</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
