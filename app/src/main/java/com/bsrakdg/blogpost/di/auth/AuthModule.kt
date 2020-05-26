@@ -5,7 +5,6 @@ import com.bsrakdg.blogpost.persistence.AccountPropertiesDao
 import com.bsrakdg.blogpost.persistence.AuthTokenDao
 import com.bsrakdg.blogpost.repository.auth.AuthRepository
 import com.bsrakdg.blogpost.session.SessionManager
-import com.bsrakdg.blogpost.utils.Constants
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -15,9 +14,8 @@ class AuthModule {
 
     @AuthScope
     @Provides
-    fun provideFakeApiService(): BlogPostAuthService {
-        return Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
+    fun provideFakeApiService(retrofitBuilder: Retrofit.Builder): BlogPostAuthService {
+        return retrofitBuilder
             .build()
             .create(BlogPostAuthService::class.java)
     }
