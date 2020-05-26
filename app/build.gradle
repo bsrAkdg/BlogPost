@@ -116,6 +116,13 @@ dependencies {
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
+    def dagger_android_version = "2.27"
+
+    // Dagger Android
+    implementation "com.google.dagger:dagger-android:$dagger_android_version"
+    implementation "com.google.dagger:dagger-android-support:$dagger_android_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger_android_version"
+
     // JetPack navigation components
     def nav_version = "2.3.0-beta01"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"

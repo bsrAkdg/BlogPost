@@ -4,8 +4,10 @@ import com.bsrakdg.blogpost.api.auth.BlogPostAuthService
 import com.bsrakdg.blogpost.persistence.AccountPropertiesDao
 import com.bsrakdg.blogpost.persistence.AuthTokenDao
 import com.bsrakdg.blogpost.session.SessionManager
+import javax.inject.Inject
 
 class AuthRepository
+@Inject // AuthModule.class : provideAuthRepository
 constructor(
     val authTokenDao: AuthTokenDao,
     val accountPropertiesDao: AccountPropertiesDao,

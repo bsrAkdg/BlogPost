@@ -3,7 +3,9 @@ package com.bsrakdg.blogpost.di
 import androidx.lifecycle.ViewModelProvider
 import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
 import dagger.Binds
+import dagger.Module
 
+@Module
 abstract class ViewModelFactoryModule {
 
     @Binds
