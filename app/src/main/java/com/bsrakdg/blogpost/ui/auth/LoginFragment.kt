@@ -7,9 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import com.bsrakdg.blogpost.R
-import com.bsrakdg.blogpost.utils.ApiEmptyResponse
-import com.bsrakdg.blogpost.utils.ApiErrorResponse
-import com.bsrakdg.blogpost.utils.ApiSuccessResponse
+import com.bsrakdg.blogpost.ui.auth.state.LoginFields
+import kotlinx.android.synthetic.main.fragment_login.*
 
 class LoginFragment : BaseAuthFragment() {
 
@@ -24,21 +23,35 @@ class LoginFragment : BaseAuthFragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "LoginFragment : ${viewModel.hashCode()}")
 
+        subscribeObserver()
+    }
 
-        viewModel.testLogin().observe(viewLifecycleOwner, Observer { response ->
-            when (response) {
-                is ApiSuccessResponse -> {
-                    Log.d(TAG, "LoginFragment response : ${response.body}")
+    private fun subscribeObserver() {
+        viewModel.viewState.observe(viewLifecycleOwner, Observer { authViewState ->
+            authViewState.loginFields?.let { loginFields ->
+
+                // For configuration change
+                loginFields.login_email?.let { email ->
+                    input_email.setText(email)
                 }
 
-                is ApiErrorResponse -> {
-                    Log.d(TAG, "LoginFragment error message : ${response.errorMessage}")
+                loginFields.login_password?.let { password ->
+                    input_password.setText(password)
                 }
 
-                is ApiEmptyResponse -> {
-                    Log.d(TAG, "LoginFragment empty response")
-                }
             }
+
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // for return back
+        viewModel.setLoginFields(
+            LoginFields(
+                input_email.text.toString(),
+                input_password.text.toString()
+            )
+        )
     }
 }
