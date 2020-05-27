@@ -1,32 +1,71 @@
 package com.bsrakdg.blogpost.ui.auth
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import com.bsrakdg.blogpost.api.auth.network_responses.LoginResponse
-import com.bsrakdg.blogpost.api.auth.network_responses.RegistrationResponse
+import com.bsrakdg.blogpost.models.AuthToken
 import com.bsrakdg.blogpost.repository.auth.AuthRepository
-import com.bsrakdg.blogpost.utils.GenericApiResponse
+import com.bsrakdg.blogpost.ui.BaseViewModel
+import com.bsrakdg.blogpost.ui.DataState
+import com.bsrakdg.blogpost.ui.auth.state.AuthStateEvent
+import com.bsrakdg.blogpost.ui.auth.state.AuthStateEvent.*
+import com.bsrakdg.blogpost.ui.auth.state.AuthViewState
+import com.bsrakdg.blogpost.ui.auth.state.LoginFields
+import com.bsrakdg.blogpost.ui.auth.state.RegistrationFields
+import com.bsrakdg.blogpost.utils.AbsentLiveData
 import javax.inject.Inject
 
 class AuthViewModel
 @Inject
 constructor(
     val authRepository: AuthRepository
-) : ViewModel() {
+) : BaseViewModel<AuthStateEvent, AuthViewState>() {
 
-    fun testLogin(): LiveData<GenericApiResponse<LoginResponse>> {
-        return authRepository.testLogin(
-            "your_mail_address",
-            "your_password"
-        )
+    override fun initNewViewState(): AuthViewState {
+        return AuthViewState()
     }
 
-    fun testRegister(): LiveData<GenericApiResponse<RegistrationResponse>> {
-        return authRepository.testRegister(
-            "your_mail_address",
-            "your_username",
-            "your_password",
-            "your_password"
-        )
+    override fun handleStateEvent(stateEvent: AuthStateEvent): LiveData<DataState<AuthViewState>> {
+        // if fragment change event from view model, base view model handle
+        when (stateEvent) {
+            is LoginAttemptEvent -> {
+                return AbsentLiveData.create()
+            }
+            is RegisterAttemptEvent -> {
+                return AbsentLiveData.create()
+            }
+            is CheckPreviousAuthEvent -> {
+                return AbsentLiveData.create()
+            }
+        }
+    }
+
+    // this method triggers by register button onclick on RegisterFragment
+    fun setRegistrationFields(registrationFields: RegistrationFields) {
+        val update = getCurrentViewStateOrNew()
+        // do not continue if it has already been triggered
+        if (update.registrationFields == registrationFields) {
+            return
+        }
+        update.registrationFields = registrationFields
+        _viewState.value = update
+    }
+
+    // this method triggers by login button onclick on LoginFragment
+    fun setLoginFields(loginFields: LoginFields) {
+        val update = getCurrentViewStateOrNew()
+        // do not continue if it has already been triggered
+        if (update.loginFields == loginFields) {
+            return
+        }
+        update.loginFields = loginFields
+        _viewState.value = update
+    }
+
+    fun setAuthToken(authToken: AuthToken) {
+        val update = getCurrentViewStateOrNew()
+        if (update.authToken == authToken) {
+            return
+        }
+        update.authToken = authToken
+        _viewState.value = update
     }
 }
