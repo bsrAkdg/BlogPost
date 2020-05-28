@@ -5,6 +5,7 @@ import com.bsrakdg.blogpost.di.auth.AuthModule
 import com.bsrakdg.blogpost.di.auth.AuthScope
 import com.bsrakdg.blogpost.di.auth.AuthViewModelModule
 import com.bsrakdg.blogpost.ui.auth.AuthActivity
+import com.bsrakdg.blogpost.ui.main.MainActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -20,4 +21,7 @@ abstract class ActivityBuildersModule {
         ]
     )
     abstract fun contributeAuthActivity(): AuthActivity
+
+    @ContributesAndroidInjector
+    abstract fun contributeMainActivity(): MainActivity
 }

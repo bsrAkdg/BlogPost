@@ -27,9 +27,9 @@ constructor(
 
     private val TAG: String = "SessionManager"
 
-    private val _cachedToken = MutableLiveData<AuthToken>()
+    private val _cachedToken = MutableLiveData<AuthToken?>()
 
-    val cachedToken: LiveData<AuthToken>
+    val cachedToken: LiveData<AuthToken?>
         get() = _cachedToken
 
 
@@ -67,7 +67,7 @@ constructor(
         // We must be sure on main thread
         GlobalScope.launch(Main) {
             if (_cachedToken.value != newValue) {
-                _cachedToken.value = newValue!!
+                _cachedToken.value = newValue
             }
         }
     }
