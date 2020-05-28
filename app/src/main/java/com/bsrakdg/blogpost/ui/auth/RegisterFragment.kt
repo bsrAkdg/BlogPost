@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import com.bsrakdg.blogpost.R
+import com.bsrakdg.blogpost.ui.auth.state.AuthStateEvent.RegisterAttemptEvent
 import com.bsrakdg.blogpost.ui.auth.state.RegistrationFields
 import kotlinx.android.synthetic.main.fragment_register.*
 
@@ -24,6 +25,10 @@ class RegisterFragment : BaseAuthFragment() {
         Log.d(TAG, "RegisterFragment : ${viewModel.hashCode()}")
 
         subscribeObserver()
+
+        register_button.setOnClickListener {
+            register()
+        }
     }
 
     private fun subscribeObserver() {
@@ -48,6 +53,19 @@ class RegisterFragment : BaseAuthFragment() {
                 }
             }
         })
+    }
+
+    private fun register() {
+        // Trigger state event on view model, view model has already subscribe state events changes
+        // and then view model handles this event
+        viewModel.setStateEvent(
+            RegisterAttemptEvent(
+                input_email.text.toString(),
+                input_username.text.toString(),
+                input_password.text.toString(),
+                input_password_confirm.text.toString()
+            )
+        )
     }
 
     override fun onDestroyView() {

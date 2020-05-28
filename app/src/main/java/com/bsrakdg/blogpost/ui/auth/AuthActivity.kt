@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.ui.BaseActivity
+import com.bsrakdg.blogpost.ui.ResponseType.*
 import com.bsrakdg.blogpost.ui.main.MainActivity
 import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
 import javax.inject.Inject
@@ -28,6 +29,43 @@ class AuthActivity : BaseActivity() {
     }
 
     private fun subscribeObservers() {
+
+        // view model repository response subscribes
+        viewModel.dataState.observe(this, Observer { dataState ->
+
+            dataState.data?.let { data ->
+
+                // data on Data class
+                data.data?.let { event ->
+                    event.getContentIfNotHandled()?.let { authViewState ->
+                        authViewState.authToken?.let { authToken ->
+                            Log.d(TAG, "AuthActivity, DataState : $authToken")
+                            viewModel.setAuthToken(authToken)
+                        }
+                    }
+                }
+
+                // response on Data class
+                data.response?.let { event ->
+                    event.getContentIfNotHandled()?.let { response ->
+
+                        when (response.responseType) {
+                            is Dialog -> {
+                                // show dialog
+                                Log.d(TAG, "AuthActivity, Response : ${response.message} ");
+                            }
+                            is Toast -> {
+                                // show toast
+                                Log.d(TAG, "AuthActivity, Response : ${response.message} ");
+                            }
+                            is None -> {
+                                Log.d(TAG, "AuthActivity, Response : ${response.message} ");
+                            }
+                        }
+                    }
+                }
+            }
+        })
 
         // view model subscribes
         viewModel.viewState.observe(this, Observer { authViewState ->

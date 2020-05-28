@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import com.bsrakdg.blogpost.R
-import com.bsrakdg.blogpost.models.AuthToken
+import com.bsrakdg.blogpost.ui.auth.state.AuthStateEvent.LoginAttemptEvent
 import com.bsrakdg.blogpost.ui.auth.state.LoginFields
 import kotlinx.android.synthetic.main.fragment_login.*
 
@@ -28,13 +28,19 @@ class LoginFragment : BaseAuthFragment() {
 
         // main activity navigate example
         login_button.setOnClickListener {
-            viewModel.setAuthToken(
-                AuthToken(
-                    1,
-                    "fdfdsfsddsfsdf"
-                )
-            )
+            login()
         }
+    }
+
+    fun login() {
+        // Trigger state event on view model, view model has already subscribe state events changes
+        // and then view model handles this event
+        viewModel.setStateEvent(
+            LoginAttemptEvent(
+                input_email.text.toString(),
+                input_password.text.toString()
+            )
+        )
     }
 
     private fun subscribeObserver() {
@@ -49,9 +55,7 @@ class LoginFragment : BaseAuthFragment() {
                 loginFields.login_password?.let { password ->
                     input_password.setText(password)
                 }
-
             }
-
         })
     }
 

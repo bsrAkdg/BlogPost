@@ -27,10 +27,18 @@ constructor(
         // if fragment change event from view model, base view model handle
         when (stateEvent) {
             is LoginAttemptEvent -> {
-                return AbsentLiveData.create()
+                return authRepository.attemptLogin(
+                    stateEvent.email,
+                    stateEvent.password
+                )
             }
             is RegisterAttemptEvent -> {
-                return AbsentLiveData.create()
+                return authRepository.attemptRegister(
+                    stateEvent.email,
+                    stateEvent.username,
+                    stateEvent.password,
+                    stateEvent.confirm_password
+                )
             }
             is CheckPreviousAuthEvent -> {
                 return AbsentLiveData.create()
