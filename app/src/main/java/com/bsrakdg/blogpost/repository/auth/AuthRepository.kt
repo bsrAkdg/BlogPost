@@ -34,35 +34,6 @@ constructor(
             object : LiveData<DataState<AuthViewState>>() {
                 override fun onActive() {
                     super.onActive()
-                    when (response) {
-                        is ApiSuccessResponse -> {
-                            value = DataState.data(
-                                data = AuthViewState(
-                                    authToken = AuthToken(
-                                        response.body.pk,
-                                        response.body.token
-                                    )
-                                ),
-                                response = null
-                            )
-                        }
-                        is ApiErrorResponse -> {
-                            value = DataState.error(
-                                response = Response(
-                                    message = response.errorMessage,
-                                    responseType = ResponseType.Dialog()
-                                )
-                            )
-                        }
-                        is ApiEmptyResponse -> {
-                            value = DataState.error(
-                                response = Response(
-                                    message = ERROR_UNKNOWN,
-                                    responseType = ResponseType.Dialog()
-                                )
-                            )
-                        }
-                    }
                 }
             }
         }
@@ -112,14 +83,5 @@ constructor(
                 }
             }
     }
-
-//    fun attemptRegister(
-//        email: String,
-//        username: String,
-//        password: String,
-//        confirmPassword: String
-//    ): LiveData<DataState<AuthViewState>> {
-//        return blogPostAuthService.register(email, username, password, confirmPassword)
-//    }
 }
 
