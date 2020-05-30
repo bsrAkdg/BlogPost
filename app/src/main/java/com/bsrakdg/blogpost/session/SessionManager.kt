@@ -72,7 +72,7 @@ constructor(
         }
     }
 
-    private fun isConnectedToTheInternet(): Boolean {
+    public fun isConnectedToTheInternet(): Boolean {
         val connectivityManager =
             application.getSystemService(android.content.Context.CONNECTIVITY_SERVICE)
                     as ConnectivityManager

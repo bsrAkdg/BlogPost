@@ -17,15 +17,14 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 
-@InternalCoroutinesApi
 abstract class NetworkBoundResource<ResponseObject, ViewStateType>(
     isNetworkAvailable: Boolean
 ) {
     private val TAG: String = "NetworkBoundResource"
 
-    protected val result = MediatorLiveData<DataState<ViewStateType>>()
+    private val result = MediatorLiveData<DataState<ViewStateType>>()
     protected lateinit var job: CompletableJob
-    protected lateinit var coroutineScope: CoroutineScope
+    lateinit var coroutineScope: CoroutineScope
 
     init {
         this.setJob(initNewJob())
@@ -96,7 +95,7 @@ abstract class NetworkBoundResource<ResponseObject, ViewStateType>(
         }
     }
 
-    @InternalCoroutinesApi
+    @OptIn(InternalCoroutinesApi::class)
     private fun initNewJob(): Job {
         Log.d(TAG, "initNewJob: called...")
         job = Job()
@@ -108,8 +107,17 @@ abstract class NetworkBoundResource<ResponseObject, ViewStateType>(
                     if (job.isCancelled) {
                         Log.e(TAG, "NetworkBoundResource: Job has been cancelled.")
                         cause?.let {
-                            onErrorReturn(it.message, false, true)
-                        } ?: onErrorReturn(ERROR_UNKNOWN, false, true)
+                            // cancellation with message
+                            onErrorReturn(
+                                it.message,
+                                shouldUseDialog = false,
+                                shouldUseToast = true
+                            )
+                        } ?: onErrorReturn(
+                            ERROR_UNKNOWN,
+                            shouldUseDialog = false,
+                            shouldUseToast = true
+                        )
                     } else if (job.isCompleted) {
                         Log.e(TAG, "NetworkBoundResource: Job has been completed...")
                         // Do nothing. Should be handled already.
@@ -130,7 +138,7 @@ abstract class NetworkBoundResource<ResponseObject, ViewStateType>(
             msg = ERROR_UNKNOWN
         } else if (ErrorHandling.isNetworkError(msg)) {
             msg = ERROR_CHECK_NETWORK_CONNECTION
-            useDialog = false //
+            useDialog = false // show toast with message
         }
 
         if (shouldUseToast) {
