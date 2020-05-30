@@ -3,6 +3,7 @@ package com.bsrakdg.blogpost.ui.auth
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -10,9 +11,9 @@ import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.ui.BaseActivity
-import com.bsrakdg.blogpost.ui.ResponseType.*
 import com.bsrakdg.blogpost.ui.main.MainActivity
 import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
+import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 class AuthActivity : BaseActivity(), NavController.OnDestinationChangedListener {
@@ -22,13 +23,21 @@ class AuthActivity : BaseActivity(), NavController.OnDestinationChangedListener 
 
     lateinit var viewModel: AuthViewModel
 
+    override fun displayProgressBar(bool: Boolean) {
+        if (bool) {
+            progress_bar.visibility = View.VISIBLE
+        } else {
+            progress_bar.visibility = View.GONE
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
         viewModel = ViewModelProvider(this, providerFactory).get(AuthViewModel::class.java)
 
-        // listen nav graph changes
+        // listen nav graph changes, if nav graph change cancel all jobs on repository
         findNavController(R.id.auth_fragments_container).addOnDestinationChangedListener(this)
 
         subscribeObservers()
@@ -39,6 +48,10 @@ class AuthActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         // view model repository response subscribes
         viewModel.dataState.observe(this, Observer { dataState ->
 
+            // trigger base activity data state change listener
+            onDataStateChange(dataState)
+
+            // handle data on datastate (success)
             dataState.data?.let { data ->
 
                 // data on Data class
@@ -47,26 +60,6 @@ class AuthActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                         authViewState.authToken?.let { authToken ->
                             Log.d(TAG, "AuthActivity, DataState : $authToken")
                             viewModel.setAuthToken(authToken)
-                        }
-                    }
-                }
-
-                // response on Data class
-                data.response?.let { event ->
-                    event.getContentIfNotHandled()?.let { response ->
-
-                        when (response.responseType) {
-                            is Dialog -> {
-                                // show dialog
-                                Log.d(TAG, "AuthActivity, Response : ${response.message} ");
-                            }
-                            is Toast -> {
-                                // show toast
-                                Log.d(TAG, "AuthActivity, Response : ${response.message} ");
-                            }
-                            is None -> {
-                                Log.d(TAG, "AuthActivity, Response : ${response.message} ");
-                            }
                         }
                     }
                 }

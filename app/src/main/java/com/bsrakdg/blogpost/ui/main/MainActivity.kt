@@ -3,6 +3,7 @@ package com.bsrakdg.blogpost.ui.main
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.Observer
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.ui.BaseActivity
@@ -19,6 +20,14 @@ class MainActivity : BaseActivity() {
             sessionManager.logout()
         }
         subscribeObservers()
+    }
+
+    override fun displayProgressBar(bool: Boolean) {
+        if (bool) {
+            progress_bar.visibility = View.VISIBLE
+        } else {
+            progress_bar.visibility = View.GONE
+        }
     }
 
     private fun subscribeObservers() {
