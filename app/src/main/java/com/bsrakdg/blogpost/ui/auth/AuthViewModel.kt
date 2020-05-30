@@ -10,13 +10,12 @@ import com.bsrakdg.blogpost.ui.auth.state.AuthStateEvent.*
 import com.bsrakdg.blogpost.ui.auth.state.AuthViewState
 import com.bsrakdg.blogpost.ui.auth.state.LoginFields
 import com.bsrakdg.blogpost.ui.auth.state.RegistrationFields
-import com.bsrakdg.blogpost.utils.AbsentLiveData
 import javax.inject.Inject
 
 class AuthViewModel
 @Inject
 constructor(
-    val authRepository: AuthRepository
+    private val authRepository: AuthRepository
 ) : BaseViewModel<AuthStateEvent, AuthViewState>() {
 
     override fun initNewViewState(): AuthViewState {
@@ -41,7 +40,7 @@ constructor(
                 )
             }
             is CheckPreviousAuthEvent -> {
-                return AbsentLiveData.create()
+                return authRepository.checkPreviousAuthUser()
             }
         }
     }

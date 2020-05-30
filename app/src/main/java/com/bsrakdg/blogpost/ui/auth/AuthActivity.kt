@@ -11,6 +11,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.ui.BaseActivity
+import com.bsrakdg.blogpost.ui.auth.state.AuthStateEvent
 import com.bsrakdg.blogpost.ui.main.MainActivity
 import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
 import kotlinx.android.synthetic.main.activity_main.*
@@ -41,6 +42,12 @@ class AuthActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         findNavController(R.id.auth_fragments_container).addOnDestinationChangedListener(this)
 
         subscribeObservers()
+
+        // 1. Check shared pref has a email?
+        // 2. Check database has a token?
+        // 3. If has a token go main page directly
+        // 4. If has not a token go login page directly
+        checkPreviousAuthUser()
     }
 
     private fun subscribeObservers() {
@@ -81,6 +88,10 @@ class AuthActivity : BaseActivity(), NavController.OnDestinationChangedListener 
                 finish()
             }
         })
+    }
+
+    fun checkPreviousAuthUser() {
+        viewModel.setStateEvent(AuthStateEvent.CheckPreviousAuthEvent())
     }
 
     private fun navMainActivity() {
