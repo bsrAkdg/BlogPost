@@ -11,7 +11,6 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.bsrakdg.blogpost.R
-import com.bsrakdg.blogpost.utils.BottomNavController.OnNavReselectedListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 /**
@@ -24,15 +23,15 @@ class BottomNavController(
     val context: Context,
     @IdRes val containerId: Int,
     @IdRes val appStartDestinationId: Int,
-    val graphChangedListener: OnNavGraphChanged?, // optional
+    val graphChangeListener: OnNavigationGraphChanged?, // should be optional
     val navGraphProvider: NavGraphProvider // required
 ) {
-
     private val TAG: String = "BottomNavController"
+    private val navigationBackStack = BackStack.of(appStartDestinationId)
     lateinit var activity: Activity
     lateinit var fragmentManager: FragmentManager
-    lateinit var navItemChangeListener: OnNavItemChanged
-    private val navBackStack = BackStack.of(appStartDestinationId)
+    lateinit var navItemChangeListener: OnNavigationItemChanged
+
 
     init {
         if (context is Activity) {
@@ -41,13 +40,11 @@ class BottomNavController(
         }
     }
 
-    fun onNavItemSelected(itemId: Int = navBackStack.last()): Boolean {
-        // Replace fragment representing a navigation item
-        val fragment =
-            fragmentManager.findFragmentByTag(itemId.toString()) ?: NavHostFragment.create(
-                navGraphProvider.getNavGraphId(itemId)
-            )
+    fun onNavigationItemSelected(itemId: Int = navigationBackStack.last()): Boolean {
 
+        // Replace fragment representing a navigation item
+        val fragment = fragmentManager.findFragmentByTag(itemId.toString())
+            ?: NavHostFragment.create(navGraphProvider.getNavGraphId(itemId))
         fragmentManager.beginTransaction()
             .setCustomAnimations(
                 R.anim.fade_in,
@@ -59,20 +56,52 @@ class BottomNavController(
             .addToBackStack(null)
             .commit()
 
-        // Add to backstack
-        navBackStack.moveLast(itemId) // {1} moveThan(2) -> {1, 2}
+        // Add to back stack
+        navigationBackStack.moveLast(itemId) // {1} moveThan(2) -> {1, 2}
 
-
-        // update checked icon
+        // Update checked icon
         navItemChangeListener.onItemChanged(itemId)
 
-        // Communicate with Activity
-        graphChangedListener?.onGraphChanged() // notify repository from activity
+        // communicate with Activity
+        graphChangeListener?.onGraphChange() // notify repository from activity
 
         return true
     }
 
-    private class BackStack : ArrayList<Int>() { //called backstack
+    fun onBackPressed() {
+        val childFragmentManager = fragmentManager.findFragmentById(containerId)!!
+            .childFragmentManager
+        when {
+            // We should always try to go back on the child fragment manager stack before going to
+            // the navigation stack. It's important to use the child fragment manager instead of the
+            // NavController because if the user change tabs super fast commit of the
+            // supportFragmentManager may mess up with the NavController child fragment manager back
+            // stack
+
+            childFragmentManager.popBackStackImmediate() -> {
+            }
+            // Fragment back stack is empty so try to go back on the navigation stack
+            navigationBackStack.size > 1 -> {
+                // Remove last item from back stack
+                navigationBackStack.removeLast()
+
+                // Update the container with new fragment
+                onNavigationItemSelected()
+
+            }
+            // If the stack has only one and it's not the navigation home we should
+            // ensure that the application always leave from startDestination
+            navigationBackStack.last() != appStartDestinationId -> {
+                navigationBackStack.removeLast()
+                navigationBackStack.add(0, appStartDestinationId)
+                onNavigationItemSelected()
+            }
+            // Navigation stack is empty, so finish the activity
+            else -> activity.finish()
+        }
+    }
+
+    private class BackStack : ArrayList<Int>() {
         companion object {
             fun of(vararg elements: Int): BackStack {
                 val b = BackStack()
@@ -90,47 +119,50 @@ class BottomNavController(
     }
 
 
-    // for setting the checked icon in the bottom nav
-    interface OnNavItemChanged {
+    // For setting the checked icon in the bottom nav
+    interface OnNavigationItemChanged {
         fun onItemChanged(itemId: Int)
     }
 
-    fun setOnNavItemChanged(listener: (ItemId: Int) -> Unit) {
-        this.navItemChangeListener = object : OnNavItemChanged {
-            override fun onItemChanged(itemId: Int) {
-                listener.invoke(itemId) // inner interface
-            }
-
-        }
-    }
-
-    // get id of each graph
-    // example: R.navigation.nav.blog
+    // Get id of each graph
+    // ex: R.navigation.nav_blog
+    // ex: R.navigation.nav_create_blog
     interface NavGraphProvider {
-
         @NavigationRes
         fun getNavGraphId(itemId: Int): Int
     }
 
-    // Execute when nav graph changes
-    // example: go from Home to Create tab
-    interface OnNavGraphChanged {
-        fun onGraphChanged()
+    // Execute when Navigation Graph changes.
+    // ex: Select a new item on the bottom navigation
+    // ex: Home -> Account
+    interface OnNavigationGraphChanged{
+        fun onGraphChange()
     }
 
-    // example: click Home duplicate
-    interface OnNavReselectedListener {
-        fun onReselectedNavItem(navController: NavController, fragment: Fragment)
+    interface OnNavigationReselectedListener{
+
+        fun onReselectNavItem(navController: NavController, fragment: Fragment)
     }
+
+    fun setOnItemNavigationChanged(listener: (itemId: Int) -> Unit) {
+        this.navItemChangeListener = object : OnNavigationItemChanged {
+            override fun onItemChanged(itemId: Int) {
+                listener.invoke(itemId)
+            }
+        }
+    }
+
 }
 
+// Convenience extension to set up the navigation
 fun BottomNavigationView.setUpNavigation(
     bottomNavController: BottomNavController,
-    onNavReselectedListener: OnNavReselectedListener
+    onReselectListener: BottomNavController.OnNavigationReselectedListener
 ) {
 
     setOnNavigationItemSelectedListener {
-        bottomNavController.onNavItemSelected(it.itemId)
+        bottomNavController.onNavigationItemSelected(it.itemId)
+
     }
 
     setOnNavigationItemReselectedListener {
@@ -140,11 +172,14 @@ fun BottomNavigationView.setUpNavigation(
             .childFragmentManager
             .fragments[0]?.let { fragment ->
 
-            onNavReselectedListener.onReselectedNavItem(
+            onReselectListener.onReselectNavItem(
                 bottomNavController.activity.findNavController(bottomNavController.containerId),
                 fragment
             )
-
         }
+    }
+
+    bottomNavController.setOnItemNavigationChanged { itemId ->
+        menu.findItem(itemId).isChecked = true
     }
 }
