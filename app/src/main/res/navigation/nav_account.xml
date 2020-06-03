@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/accountFragment"
         android:name="com.bsrakdg.blogpost.ui.main.account.AccountFragment"
-        android:label="AccountFragment"
+        android:label="@string/fragment_account"
         tools:layout="@layout/fragment_account">
 
         <action
@@ -32,7 +32,7 @@
     <fragment
         android:id="@+id/changePasswordFragment"
         android:name="com.bsrakdg.blogpost.ui.main.account.ChangePasswordFragment"
-        android:label="ChangePasswordFragment"
+        android:label="@string/fragment_change_password"
         tools:layout="@layout/fragment_change_password">
 
         <action
@@ -50,7 +50,7 @@
     <fragment
         android:id="@+id/updateAccountFragment"
         android:name="com.bsrakdg.blogpost.ui.main.account.UpdateAccountFragment"
-        android:label="UpdateAccountFragment"
+        android:label="@string/fragment_update_account"
         tools:layout="@layout/fragment_update_account">
 
         <action
@@ -61,7 +61,7 @@
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out"
             app:popUpTo="@id/nav_account"
-            app:popUpToInclusive="true"/>  <!-- Reset everything, clear back stack -->
+            app:popUpToInclusive="true" />  <!-- Reset everything, clear back stack -->
     </fragment>
 
 </navigation>

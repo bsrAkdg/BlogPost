@@ -17,13 +17,14 @@ import com.bsrakdg.blogpost.ui.main.blog.UpdateBlogFragment
 import com.bsrakdg.blogpost.ui.main.blog.ViewBlogFragment
 import com.bsrakdg.blogpost.utils.BottomNavController
 import com.bsrakdg.blogpost.utils.setUpNavigation
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity(),
     BottomNavController.NavGraphProvider,
     BottomNavController.OnNavigationGraphChanged,
-    BottomNavController.OnNavigationReselectedListener{
+    BottomNavController.OnNavigationReselectedListener {
 
     private lateinit var bottomNavView: BottomNavigationView
 
@@ -99,6 +100,7 @@ class MainActivity : BaseActivity(),
 
     override fun onGraphChange() {
         // TODO("What needs to happen when the graph changes?")
+        expandAppBar()
     }
 
     override fun onReselectNavItem(navController: NavController, fragment: Fragment) =
@@ -127,5 +129,9 @@ class MainActivity : BaseActivity(),
             android.R.id.home -> onBackPressed()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun expandAppBar() {
+        findViewById<AppBarLayout>(R.id.app_bar).setExpanded(true)
     }
 }

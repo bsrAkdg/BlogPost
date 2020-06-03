@@ -50,6 +50,10 @@ class AuthActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         checkPreviousAuthUser()
     }
 
+    override fun expandAppBar() {
+        // ignore
+    }
+
     private fun subscribeObservers() {
 
         // view model repository response subscribes

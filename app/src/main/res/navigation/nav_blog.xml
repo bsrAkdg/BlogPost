@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/blogFragment"
         android:name="com.bsrakdg.blogpost.ui.main.blog.BlogFragment"
-        android:label="BlogFragment"
+        android:label="@string/fragment_blog"
         tools:layout="@layout/fragment_blog">
 
         <action
@@ -24,7 +24,7 @@
     <fragment
         android:id="@+id/viewBlogFragment"
         android:name="com.bsrakdg.blogpost.ui.main.blog.ViewBlogFragment"
-        android:label="ViewBlogFragment"
+        android:label="@string/fragment_view_blog"
         tools:layout="@layout/fragment_view_blog">
 
         <action
@@ -50,7 +50,7 @@
     <fragment
         android:id="@+id/updateBlogFragment"
         android:name="com.bsrakdg.blogpost.ui.main.blog.UpdateBlogFragment"
-        android:label="UpdateBlogFragment"
+        android:label="@string/fragment_update_blog"
         tools:layout="@layout/fragment_update_blog">
 
         <action
