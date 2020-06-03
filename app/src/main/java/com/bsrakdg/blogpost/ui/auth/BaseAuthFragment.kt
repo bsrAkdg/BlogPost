@@ -3,7 +3,6 @@ package com.bsrakdg.blogpost.ui.auth
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
-import com.bsrakdg.blogpost.api.auth.BlogPostAuthService
 import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
@@ -14,9 +13,6 @@ abstract class BaseAuthFragment : DaggerFragment() {
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
-
-    @Inject
-    lateinit var blogPost : BlogPostAuthService
 
     lateinit var viewModel: AuthViewModel
 
