@@ -3,6 +3,7 @@ package com.bsrakdg.blogpost.repository.main.account
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.switchMap
+import com.bsrakdg.blogpost.api.GenericResponse
 import com.bsrakdg.blogpost.api.main.BlogPostMainService
 import com.bsrakdg.blogpost.models.AccountProperties
 import com.bsrakdg.blogpost.models.AuthToken
@@ -10,7 +11,10 @@ import com.bsrakdg.blogpost.persistence.AccountPropertiesDao
 import com.bsrakdg.blogpost.repository.NetworkBoundResource
 import com.bsrakdg.blogpost.session.SessionManager
 import com.bsrakdg.blogpost.ui.DataState
+import com.bsrakdg.blogpost.ui.Response
+import com.bsrakdg.blogpost.ui.ResponseType
 import com.bsrakdg.blogpost.ui.main.account.state.AccountViewState
+import com.bsrakdg.blogpost.utils.AbsentLiveData
 import com.bsrakdg.blogpost.utils.ApiSuccessResponse
 import com.bsrakdg.blogpost.utils.GenericApiResponse
 import kotlinx.coroutines.Dispatchers.Main
@@ -33,6 +37,7 @@ constructor(
             NetworkBoundResource<AccountProperties, AccountProperties, AccountViewState>(
                 isNetworkAvailable = sessionManager.isConnectedToTheInternet(),
                 isNetworkRequest = true,
+                shouldCancelIfNoInternet = false,
                 shouldLoadFromCache = true
             ) {
 
@@ -82,15 +87,77 @@ constructor(
             override suspend fun updateLocalDb(cacheObject: AccountProperties?) {
                 cacheObject?.let { accountProperties ->
                     accountPropertiesDao.updateAccountProperties(
-                        accountProperties.pk,
-                        accountProperties.email,
-                        accountProperties.username
+                        pk = accountProperties.pk,
+                        email = accountProperties.email,
+                        username = accountProperties.username
                     )
                 }
             }
 
         }.asLiveData()
     }
+
+    fun saveAccountProperties(
+        authToken: AuthToken,
+        accountProperties: AccountProperties
+    ): LiveData<DataState<AccountViewState>> {
+        return object : NetworkBoundResource<GenericResponse, Any, AccountViewState>(
+            isNetworkAvailable = sessionManager.isConnectedToTheInternet(),
+            isNetworkRequest = true,
+            shouldCancelIfNoInternet = true,
+            shouldLoadFromCache = false
+        ) {
+            override suspend fun createCacheRequestAndReturn() {
+                // Not applicable
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<GenericResponse>) {
+                updateLocalDb(null) // do not care cache
+
+                withContext(Main) {
+
+                    // finish with success response
+                    onCompleteJob(
+                        DataState.data(
+                            data = null,
+                            response = Response(
+                                message = response.body.response,
+                                responseType = ResponseType.Toast()
+                            )
+                        )
+                    )
+                }
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<GenericResponse>> {
+                return blogPostMainService.saveAccountProperties(
+                    authorization = "Token ${authToken.token!!}",
+                    email = accountProperties.email,
+                    username = accountProperties.username
+                )
+            }
+
+            override fun loadFromCache(): LiveData<AccountViewState> {
+                // ignore
+                return AbsentLiveData.create()
+            }
+
+            override suspend fun updateLocalDb(cacheObject: Any?) {
+                return accountPropertiesDao.updateAccountProperties(
+                    pk = accountProperties.pk,
+                    email = accountProperties.email,
+                    username = accountProperties.username
+                )
+            }
+
+            override fun setJob(job: Job) {
+                repositoryJob?.cancel()
+                repositoryJob = job
+            }
+
+        }.asLiveData()
+    }
+
 
     fun cancelActiveJobs() {
         Log.d(TAG, "AccountRepository: cancelActiveJobs")

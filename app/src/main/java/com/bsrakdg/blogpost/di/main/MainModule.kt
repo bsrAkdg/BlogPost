@@ -21,7 +21,7 @@ class MainModule {
 
     @MainScope
     @Provides
-    fun provideMainRepository(
+    fun provideAccountRepository(
         blogPostMainService: BlogPostMainService,
         accountPropertiesDao: AccountPropertiesDao,
         sessionManager: SessionManager

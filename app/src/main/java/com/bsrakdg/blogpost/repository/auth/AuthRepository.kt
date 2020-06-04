@@ -62,6 +62,7 @@ constructor(
         return object : NetworkBoundResource<LoginResponse, Any, AuthViewState>(
             isNetworkAvailable = sessionManager.isConnectedToTheInternet(),
             isNetworkRequest = true,
+            shouldCancelIfNoInternet = true,
             shouldLoadFromCache = false
         ) {
             override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<LoginResponse>) {
@@ -167,6 +168,7 @@ constructor(
         return object : NetworkBoundResource<RegistrationResponse, Any, AuthViewState>(
             isNetworkAvailable = sessionManager.isConnectedToTheInternet(),
             isNetworkRequest = true,
+            shouldCancelIfNoInternet = true,
             shouldLoadFromCache = false
         ) {
             override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<RegistrationResponse>) {
@@ -266,6 +268,7 @@ constructor(
         return object : NetworkBoundResource<Void, Any, AuthViewState>(
             isNetworkAvailable = sessionManager.isConnectedToTheInternet(),
             isNetworkRequest = false,
+            shouldCancelIfNoInternet = false,
             shouldLoadFromCache = false
         ) {
             override suspend fun createCacheRequestAndReturn() {
