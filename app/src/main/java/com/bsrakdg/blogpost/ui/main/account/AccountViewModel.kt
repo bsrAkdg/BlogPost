@@ -16,7 +16,7 @@ class AccountViewModel
 @Inject
 constructor(
     val sessionManager: SessionManager,
-    val accountRepository: AccountRepository
+    private val accountRepository: AccountRepository
 ) : BaseViewModel<AccountStateEvent, AccountViewState>() {
 
     override fun initNewViewState(): AccountViewState {
@@ -26,7 +26,9 @@ constructor(
     override fun handleStateEvent(stateEvent: AccountStateEvent): LiveData<DataState<AccountViewState>> {
         when (stateEvent) {
             is GetAccountPropertiesEvent -> {
-                return AbsentLiveData.create()
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    accountRepository.getAccountProperties(authToken)
+                } ?: AbsentLiveData.create()
             }
 
             is UpdateAccountPropertiesEvent -> {
