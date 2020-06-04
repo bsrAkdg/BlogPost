@@ -12,12 +12,31 @@ import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.ui.DataStateChangeListener
 import dagger.android.support.DaggerFragment
 
-abstract class BaseBlogFragment : DaggerFragment(){
+abstract class BaseBlogFragment : DaggerFragment() {
 
     val TAG: String = "BaseBlogFragment"
 
     lateinit var stateChangeListener: DataStateChangeListener
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupActionBarWithNavController(R.id.blogFragment, activity as AppCompatActivity)
+
+        cancelActiveJobs()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            stateChangeListener = context as DataStateChangeListener
+        } catch (e: ClassCastException) {
+            Log.e(TAG, "$context must implement DataStateChangeListener")
+        }
+    }
+
+    public fun cancelActiveJobs() {
+        // viewModel.cancelActiveJobs()
+    }
 
     private fun setupActionBarWithNavController(fragmentId: Int, activity: AppCompatActivity) {
         val appBarConfiguration = AppBarConfiguration(setOf(fragmentId))
@@ -28,17 +47,4 @@ abstract class BaseBlogFragment : DaggerFragment(){
         )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupActionBarWithNavController(R.id.blogFragment, activity as AppCompatActivity)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        try{
-            stateChangeListener = context as DataStateChangeListener
-        }catch(e: ClassCastException){
-            Log.e(TAG, "$context must implement DataStateChangeListener" )
-        }
-    }
 }

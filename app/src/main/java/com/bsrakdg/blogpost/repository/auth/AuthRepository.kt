@@ -10,6 +10,7 @@ import com.bsrakdg.blogpost.models.AccountProperties
 import com.bsrakdg.blogpost.models.AuthToken
 import com.bsrakdg.blogpost.persistence.AccountPropertiesDao
 import com.bsrakdg.blogpost.persistence.AuthTokenDao
+import com.bsrakdg.blogpost.repository.JobManager
 import com.bsrakdg.blogpost.repository.NetworkBoundResource
 import com.bsrakdg.blogpost.session.SessionManager
 import com.bsrakdg.blogpost.ui.DataState
@@ -37,15 +38,9 @@ constructor(
     val sessionManager: SessionManager,
     private val sharedPreferences: SharedPreferences,
     private val sharedPrefsEditor: SharedPreferences.Editor
-) {
+) : JobManager("AuthRepository") {
 
     private val TAG = "AuthRepository"
-    private var authRepositoryJob: Job? = null
-
-    fun cancelActiveJob() {
-        Log.d(TAG, "cancelActiveJob: Cancelling on-going jobs...")
-        authRepositoryJob?.cancel()
-    }
 
     fun attemptLogin(
         email: String,
@@ -129,8 +124,10 @@ constructor(
             }
 
             override fun setJob(job: Job) {
-                authRepositoryJob?.cancel()
-                authRepositoryJob = job
+                addJob(
+                    methodName = "attemptLogin",
+                    job = job
+                )
             }
 
             override suspend fun createCacheRequestAndReturn() {
@@ -235,8 +232,10 @@ constructor(
             }
 
             override fun setJob(job: Job) {
-                authRepositoryJob?.cancel()
-                authRepositoryJob = job
+                addJob(
+                    methodName = "attemptRegister",
+                    job = job
+                )
             }
 
             override suspend fun createCacheRequestAndReturn() {
@@ -318,8 +317,10 @@ constructor(
             }
 
             override fun setJob(job: Job) {
-                authRepositoryJob?.cancel()
-                authRepositoryJob = job
+                addJob(
+                    methodName = "checkPreviousAuthUser",
+                    job = job
+                )
             }
 
             override fun loadFromCache(): LiveData<AuthViewState> {
@@ -365,7 +366,6 @@ constructor(
             }
         }
     }
-
 
     private fun saveAuthenticatedUserToPrefs(email: String) {
         Log.d(TAG, "saveAuthenticatedUserToPrefs: $email")

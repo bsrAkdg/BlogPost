@@ -32,6 +32,15 @@ class AuthActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        // 1. Check shared pref has a email?
+        // 2. Check database has a token?
+        // 3. If has a token go main page directly
+        // 4. If has not a token go login page directly
+        checkPreviousAuthUser()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
@@ -42,12 +51,6 @@ class AuthActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         findNavController(R.id.auth_fragments_container).addOnDestinationChangedListener(this)
 
         subscribeObservers()
-
-        // 1. Check shared pref has a email?
-        // 2. Check database has a token?
-        // 3. If has a token go main page directly
-        // 4. If has not a token go login page directly
-        checkPreviousAuthUser()
     }
 
     override fun expandAppBar() {

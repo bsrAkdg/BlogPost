@@ -24,5 +24,11 @@ abstract class BaseAuthFragment : DaggerFragment() {
             ViewModelProvider(this, providerFactory).get(AuthViewModel::class.java)
 
         } ?: throw Exception("Invalid Activity")
+
+        cancelActiveJobs()
+    }
+
+    fun cancelActiveJobs() {
+        viewModel.cancelActiveJobs()
     }
 }

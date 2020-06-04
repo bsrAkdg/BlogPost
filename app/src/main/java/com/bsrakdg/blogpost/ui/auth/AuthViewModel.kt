@@ -42,6 +42,18 @@ constructor(
             is CheckPreviousAuthEvent -> {
                 return authRepository.checkPreviousAuthUser()
             }
+            is None -> {
+                // for clear progress bar
+                return object : LiveData<DataState<AuthViewState>>() {
+                    override fun onActive() {
+                        super.onActive()
+                        value = DataState.data(
+                            data = null,
+                            response = null
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -77,7 +89,12 @@ constructor(
     }
 
     fun cancelActiveJobs() {
-        authRepository.cancelActiveJob()
+        handlePendingData()
+        authRepository.cancelActiveJobs()
+    }
+
+    private fun handlePendingData() {
+        setStateEvent(None())
     }
 
     override fun onCleared() {
