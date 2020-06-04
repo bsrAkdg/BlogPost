@@ -21,4 +21,13 @@ interface BlogPostMainService {
         @Field("username") username: String
     ): LiveData<GenericApiResponse<GenericResponse>>
 
+    @PUT("account/change_password/")
+    @FormUrlEncoded
+    fun updatePassword(
+        @Header("Authorization") authorization: String,
+        @Field("old_password") oldPassword: String,
+        @Field("new_password") newPassword: String,
+        @Field("confirm_new_password") confirmPassword: String
+    ): LiveData<GenericApiResponse<GenericResponse>>
+
 }

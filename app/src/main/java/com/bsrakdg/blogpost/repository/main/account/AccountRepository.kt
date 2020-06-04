@@ -158,6 +158,61 @@ constructor(
         }.asLiveData()
     }
 
+    fun updatePassword(
+        authToken: AuthToken,
+        currentPassword: String,
+        newPassword: String,
+        confirmNewPassword: String
+    ): LiveData<DataState<AccountViewState>> {
+        return object : NetworkBoundResource<GenericResponse, Any, AccountViewState>(
+            isNetworkAvailable = sessionManager.isConnectedToTheInternet(),
+            isNetworkRequest = true,
+            shouldCancelIfNoInternet = true,
+            shouldLoadFromCache = false
+        ) {
+            override suspend fun createCacheRequestAndReturn() {
+                // not applicable
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<GenericResponse>) {
+
+                withContext(Main) {
+
+                    // finish with success response
+                    onCompleteJob(
+                        DataState.data(
+                            data = null,
+                            response = Response(response.body.response, ResponseType.Toast())
+                        )
+                    )
+                }
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<GenericResponse>> {
+                return blogPostMainService.updatePassword(
+                    authorization = "Token ${authToken.token}",
+                    oldPassword = currentPassword,
+                    newPassword = newPassword,
+                    confirmPassword = confirmNewPassword
+                )
+            }
+
+            override fun loadFromCache(): LiveData<AccountViewState> {
+                // ignore
+                return AbsentLiveData.create()
+            }
+
+            override suspend fun updateLocalDb(cacheObject: Any?) {
+                // ignore
+            }
+
+            override fun setJob(job: Job) {
+                repositoryJob?.cancel()
+                repositoryJob = job
+            }
+
+        }.asLiveData()
+    }
 
     fun cancelActiveJobs() {
         Log.d(TAG, "AccountRepository: cancelActiveJobs")
