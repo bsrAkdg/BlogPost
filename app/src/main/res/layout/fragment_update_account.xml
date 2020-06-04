@@ -23,6 +23,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed">
 
+            <!-- flagNoExtractUi : land scape edittext issue -->
             <EditText
                 android:id="@+id/input_email"
                 android:layout_width="match_parent"

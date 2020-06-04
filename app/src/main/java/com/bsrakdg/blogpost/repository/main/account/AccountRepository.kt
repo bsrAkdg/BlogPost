@@ -175,14 +175,16 @@ constructor(
             }
 
             override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<GenericResponse>) {
-
                 withContext(Main) {
 
                     // finish with success response
                     onCompleteJob(
                         DataState.data(
                             data = null,
-                            response = Response(response.body.response, ResponseType.Toast())
+                            response = Response(
+                                message = response.body.response,
+                                responseType = ResponseType.Toast()
+                            )
                         )
                     )
                 }

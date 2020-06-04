@@ -73,5 +73,7 @@ class UpdateAccountFragment : BaseAccountFragment() {
                 username = input_username.text.toString()
             )
         )
+
+        stateChangeListener.hideSoftKeyboard()
     }
 }

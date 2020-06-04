@@ -1,6 +1,8 @@
 package com.bsrakdg.blogpost.ui
 
+import android.content.Context
 import android.util.Log
+import android.view.inputmethod.InputMethodManager
 import com.bsrakdg.blogpost.session.SessionManager
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.coroutines.Dispatchers.Main
@@ -67,6 +69,14 @@ abstract class BaseActivity : DaggerAppCompatActivity(), DataStateChangeListener
                     Log.d(TAG, "handleStateError: ${stateError.response.message}")
                 }
             }
+        }
+    }
+
+    override fun hideSoftKeyboard() {
+        if (currentFocus != null) {
+            val inputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
         }
     }
 
