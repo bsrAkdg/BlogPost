@@ -3,6 +3,7 @@ package com.bsrakdg.blogpost.repository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Observer
 import com.bsrakdg.blogpost.ui.DataState
 import com.bsrakdg.blogpost.ui.Response
 import com.bsrakdg.blogpost.ui.ResponseType
@@ -18,19 +19,28 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 
-abstract class NetworkBoundResource<ResponseObject, ViewStateType>(
+abstract class NetworkBoundResource<ResponseObject, CacheObject, ViewStateType>(
     isNetworkAvailable: Boolean,
-    isNetworkRequest: Boolean // is this a network request
+    isNetworkRequest: Boolean, // is this a network request
+    shouldLoadFromCache: Boolean // should the cached data be loaded?
 ) {
     private val TAG: String = "NetworkBoundResource"
 
-    private val result = MediatorLiveData<DataState<ViewStateType>>()
+    protected val result = MediatorLiveData<DataState<ViewStateType>>()
     protected lateinit var job: CompletableJob
-    lateinit var coroutineScope: CoroutineScope
+    private lateinit var coroutineScope: CoroutineScope
 
     init {
         this.setJob(initNewJob())
         setValue(DataState.loading(isLoading = true, cachedData = null))
+
+        if (shouldLoadFromCache) {
+            val dbSource = loadFromCache()
+            result.addSource(dbSource, Observer {
+                result.removeSource(dbSource)
+                setValue(DataState.loading(isLoading = true, cachedData = it))
+            })
+        }
 
         if (isNetworkRequest) {
             if (isNetworkAvailable) {
@@ -95,7 +105,8 @@ abstract class NetworkBoundResource<ResponseObject, ViewStateType>(
                 onErrorReturn(
                     response.errorMessage,
                     shouldUseDialog = true,
-                    shouldUseToast = false)
+                    shouldUseToast = false
+                )
             }
             is ApiEmptyResponse -> {
                 Log.e(TAG, "NetworkBoundResource: empty response (HTTP 204)")
@@ -190,6 +201,10 @@ abstract class NetworkBoundResource<ResponseObject, ViewStateType>(
     abstract suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<ResponseObject>)
 
     abstract fun createCall(): LiveData<GenericApiResponse<ResponseObject>>
+
+    abstract fun loadFromCache(): LiveData<ViewStateType>
+
+    abstract suspend fun updateLocalDb(cacheObject: CacheObject?)
 
     abstract fun setJob(job: Job) // this referenced by repository (cancelable actions)
 }

@@ -59,9 +59,10 @@ constructor(
             return returnOnErrorResponse(loginFieldError, ResponseType.Dialog())
         }
 
-        return object : NetworkBoundResource<LoginResponse, AuthViewState>(
+        return object : NetworkBoundResource<LoginResponse, Any, AuthViewState>(
             isNetworkAvailable = sessionManager.isConnectedToTheInternet(),
-            isNetworkRequest = true
+            isNetworkRequest = true,
+            shouldLoadFromCache = false
         ) {
             override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<LoginResponse>) {
                 Log.d(TAG, "login handleApiSuccessResponse: $response")
@@ -135,6 +136,15 @@ constructor(
                 // not used in this case
             }
 
+            override fun loadFromCache(): LiveData<AuthViewState> {
+                // ignore
+                return AbsentLiveData.create()
+            }
+
+            override suspend fun updateLocalDb(cacheObject: Any?) {
+                // ignore
+            }
+
         }.asLiveData()
     }
 
@@ -154,9 +164,10 @@ constructor(
             return returnOnErrorResponse(registrationFieldError, ResponseType.Dialog())
         }
 
-        return object : NetworkBoundResource<RegistrationResponse, AuthViewState>(
+        return object : NetworkBoundResource<RegistrationResponse, Any, AuthViewState>(
             isNetworkAvailable = sessionManager.isConnectedToTheInternet(),
-            isNetworkRequest = true
+            isNetworkRequest = true,
+            shouldLoadFromCache = false
         ) {
             override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<RegistrationResponse>) {
                 Log.d(TAG, "register handleApiSuccessResponse: $response")
@@ -229,6 +240,15 @@ constructor(
             override suspend fun createCacheRequestAndReturn() {
                 // not used in this case
             }
+
+            override fun loadFromCache(): LiveData<AuthViewState> {
+                // ignore
+                return AbsentLiveData.create()
+            }
+
+            override suspend fun updateLocalDb(cacheObject: Any?) {
+                // ignore
+            }
         }.asLiveData()
     }
 
@@ -243,9 +263,10 @@ constructor(
         }
 
         // if shared preferences has email, get token from cache (database)
-        return object : NetworkBoundResource<Void, AuthViewState>(
+        return object : NetworkBoundResource<Void, Any, AuthViewState>(
             isNetworkAvailable = sessionManager.isConnectedToTheInternet(),
-            isNetworkRequest = false
+            isNetworkRequest = false,
+            shouldLoadFromCache = false
         ) {
             override suspend fun createCacheRequestAndReturn() {
                 accountPropertiesDao.searchByEmail(previousAuthUserEmail).let { accountProperties ->
@@ -296,6 +317,15 @@ constructor(
             override fun setJob(job: Job) {
                 authRepositoryJob?.cancel()
                 authRepositoryJob = job
+            }
+
+            override fun loadFromCache(): LiveData<AuthViewState> {
+                // ignore
+                return AbsentLiveData.create()
+            }
+
+            override suspend fun updateLocalDb(cacheObject: Any?) {
+                // ignore
             }
 
         }.asLiveData()
