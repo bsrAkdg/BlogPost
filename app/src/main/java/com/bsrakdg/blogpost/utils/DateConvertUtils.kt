@@ -3,7 +3,7 @@ package com.bsrakdg.blogpost.utils
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DateUtils {
+class DateConvertUtils {
 
     companion object {
 
