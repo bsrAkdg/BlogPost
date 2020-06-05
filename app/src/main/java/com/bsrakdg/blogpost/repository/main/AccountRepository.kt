@@ -1,4 +1,4 @@
-package com.bsrakdg.blogpost.repository.main.account
+package com.bsrakdg.blogpost.repository.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.switchMap
