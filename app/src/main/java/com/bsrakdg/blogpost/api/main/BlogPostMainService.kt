@@ -2,6 +2,7 @@ package com.bsrakdg.blogpost.api.main
 
 import androidx.lifecycle.LiveData
 import com.bsrakdg.blogpost.api.GenericResponse
+import com.bsrakdg.blogpost.api.main.network_responses.BlogListSearchResponse
 import com.bsrakdg.blogpost.models.AccountProperties
 import com.bsrakdg.blogpost.utils.GenericApiResponse
 import retrofit2.http.*
@@ -30,4 +31,9 @@ interface BlogPostMainService {
         @Field("confirm_new_password") confirmPassword: String
     ): LiveData<GenericApiResponse<GenericResponse>>
 
+    @GET("blog/list")
+    fun searchListBlogPosts(
+        @Header("Authorization") authorization: String,
+        @Query("search") query: String
+    ): LiveData<GenericApiResponse<BlogListSearchResponse>>
 }

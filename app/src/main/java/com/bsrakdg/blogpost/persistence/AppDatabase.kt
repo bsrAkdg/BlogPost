@@ -7,7 +7,7 @@ import com.bsrakdg.blogpost.models.AuthToken
 import com.bsrakdg.blogpost.models.BlogPost
 
 /** There are three tables : AuthToken, AccountProperties, BlogPost */
-@Database(entities = [AuthToken::class, AccountProperties::class, BlogPost::class], version = 1)
+@Database(entities = [AuthToken::class, AccountProperties::class, BlogPost::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun getAuthTokenDao(): AuthTokenDao
