@@ -1,8 +1,7 @@
-package com.bsrakdg.blogpost.ui.main.blog
+package com.bsrakdg.blogpost.ui.main.blog.viewmodel
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
-import com.bsrakdg.blogpost.models.BlogPost
 import com.bsrakdg.blogpost.repository.main.BlogRepository
 import com.bsrakdg.blogpost.session.SessionManager
 import com.bsrakdg.blogpost.ui.BaseViewModel
@@ -34,7 +33,8 @@ constructor(
                 sessionManager.cachedToken.value?.let { authToken ->
                     blogRepository.searchBlogPosts(
                         authToken = authToken,
-                        query = viewState.value!!.blogFields.searchQuery
+                        query = getSearchQuery(),
+                        page = getPage()
                     )
                 } ?: AbsentLiveData.create()
             }
@@ -47,30 +47,6 @@ constructor(
                 AbsentLiveData.create()
             }
         }
-    }
-
-    fun setQuery(query: String){
-        val update = getCurrentViewStateOrNew()
-        update.blogFields.searchQuery = query
-        _viewState.value = update
-    }
-
-    fun setBlogListData(blogList: List<BlogPost>){
-        val update = getCurrentViewStateOrNew()
-        update.blogFields.blogList = blogList
-        _viewState.value = update
-    }
-
-    fun setBlogPost(blogPost: BlogPost) {
-        val update = getCurrentViewStateOrNew()
-        update.viewBlogFields.blogPost = blogPost
-        _viewState.value = update
-    }
-
-    fun setAuthorOfBlogPost(isAuthorOfBlog: Boolean) {
-        val update = getCurrentViewStateOrNew()
-        update.viewBlogFields.isAuthorOfBlog = isAuthorOfBlog
-        _viewState.value = update
     }
 
     fun cancelActiveJobs() {

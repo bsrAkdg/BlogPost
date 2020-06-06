@@ -11,6 +11,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.ui.DataStateChangeListener
+import com.bsrakdg.blogpost.ui.main.blog.viewmodel.BlogViewModel
 import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
 import com.bumptech.glide.RequestManager
 import dagger.android.support.DaggerFragment
