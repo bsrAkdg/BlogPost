@@ -12,6 +12,7 @@ import androidx.navigation.ui.NavigationUI
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.ui.DataStateChangeListener
 import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
+import com.bumptech.glide.RequestManager
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -23,6 +24,9 @@ abstract class BaseBlogFragment : DaggerFragment() {
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
+
+    @Inject
+    lateinit var requestManager: RequestManager
 
     lateinit var viewModel: BlogViewModel
 

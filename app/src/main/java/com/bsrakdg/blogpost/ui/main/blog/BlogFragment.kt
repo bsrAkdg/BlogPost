@@ -6,20 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.models.BlogPost
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent
 import com.bsrakdg.blogpost.utils.TopSpacingItemDecoration
-import com.bumptech.glide.RequestManager
 import kotlinx.android.synthetic.main.fragment_blog.*
-import javax.inject.Inject
 
 class BlogFragment : BaseBlogFragment(), BlogListAdapter.Interaction {
-
-    @Inject
-    lateinit var requestManager: RequestManager
 
     private lateinit var recyclerAdapter: BlogListAdapter
 
@@ -115,5 +111,8 @@ class BlogFragment : BaseBlogFragment(), BlogListAdapter.Interaction {
 
     override fun onItemSelected(position: Int, item: BlogPost) {
         Log.d(TAG, "onItemSelected : $position. item : $item")
+        // update state event for show selected item
+        viewModel.setBlogPost(item)
+        findNavController().navigate(R.id.action_blogFragment_to_viewBlogFragment)
     }
 }

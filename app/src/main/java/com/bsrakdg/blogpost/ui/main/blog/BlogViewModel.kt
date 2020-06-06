@@ -8,8 +8,7 @@ import com.bsrakdg.blogpost.session.SessionManager
 import com.bsrakdg.blogpost.ui.BaseViewModel
 import com.bsrakdg.blogpost.ui.DataState
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent
-import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.BlogSearchEvent
-import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.None
+import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.*
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
 import com.bsrakdg.blogpost.utils.AbsentLiveData
 import com.bumptech.glide.RequestManager
@@ -40,6 +39,10 @@ constructor(
                 } ?: AbsentLiveData.create()
             }
 
+            is CheckAuthorOfBlogPostEvent -> {
+                return AbsentLiveData.create()
+            }
+
             is None -> {
                 AbsentLiveData.create()
             }
@@ -55,6 +58,18 @@ constructor(
     fun setBlogListData(blogList: List<BlogPost>){
         val update = getCurrentViewStateOrNew()
         update.blogFields.blogList = blogList
+        _viewState.value = update
+    }
+
+    fun setBlogPost(blogPost: BlogPost) {
+        val update = getCurrentViewStateOrNew()
+        update.viewBlogFields.blogPost = blogPost
+        _viewState.value = update
+    }
+
+    fun setAuthorOfBlogPost(isAuthorOfBlog: Boolean) {
+        val update = getCurrentViewStateOrNew()
+        update.viewBlogFields.isAuthorOfBlog = isAuthorOfBlog
         _viewState.value = update
     }
 
