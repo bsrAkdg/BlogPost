@@ -2,6 +2,7 @@ package com.bsrakdg.blogpost.ui.main.blog.viewmodel
 
 import android.util.Log
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.BlogSearchEvent
+import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
 
 fun BlogViewModel.resetPage() {
     val update = getCurrentViewStateOrNew()
@@ -34,4 +35,10 @@ fun BlogViewModel.nextPageNumber() {
         setQueryInProgress(true)
         setStateEvent(BlogSearchEvent())
     }
+}
+
+fun BlogViewModel.handleIncomingBlogListData(viewState: BlogViewState) {
+    setQueryExhausted(viewState.blogFields.isQueryExhausted)
+    setQueryInProgress(viewState.blogFields.isQueryInProgress)
+    setBlogListData(viewState.blogFields.blogList)
 }

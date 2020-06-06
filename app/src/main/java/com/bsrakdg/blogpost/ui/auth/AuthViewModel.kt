@@ -65,7 +65,7 @@ constructor(
             return
         }
         update.registrationFields = registrationFields
-        _viewState.value = update
+        setViewState(update)
     }
 
     // this method triggers by login button onclick on LoginFragment
@@ -76,7 +76,7 @@ constructor(
             return
         }
         update.loginFields = loginFields
-        _viewState.value = update
+        setViewState(update)
     }
 
     fun setAuthToken(authToken: AuthToken) {
@@ -85,7 +85,7 @@ constructor(
             return
         }
         update.authToken = authToken
-        _viewState.value = update
+        setViewState(update)
     }
 
     fun cancelActiveJobs() {

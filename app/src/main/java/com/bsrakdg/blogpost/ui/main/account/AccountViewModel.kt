@@ -6,6 +6,7 @@ import com.bsrakdg.blogpost.repository.main.AccountRepository
 import com.bsrakdg.blogpost.session.SessionManager
 import com.bsrakdg.blogpost.ui.BaseViewModel
 import com.bsrakdg.blogpost.ui.DataState
+import com.bsrakdg.blogpost.ui.Loading
 import com.bsrakdg.blogpost.ui.main.account.state.AccountStateEvent
 import com.bsrakdg.blogpost.ui.main.account.state.AccountStateEvent.*
 import com.bsrakdg.blogpost.ui.main.account.state.AccountViewState
@@ -59,7 +60,16 @@ constructor(
             }
 
             is None -> {
-                return AbsentLiveData.create()
+                return object : LiveData<DataState<AccountViewState>>() {
+                    override fun onActive() {
+                        super.onActive()
+                        value = DataState(
+                            error = null,
+                            loading = Loading(false),
+                            data = null
+                        )
+                    }
+                }
             }
         }
     }
@@ -70,7 +80,7 @@ constructor(
             return
         }
         update.accountProperties = accountProperties
-        _viewState.value = update
+        setViewState(update)
     }
 
     fun logout() {

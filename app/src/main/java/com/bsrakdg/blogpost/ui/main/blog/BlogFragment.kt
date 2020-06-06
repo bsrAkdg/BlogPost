@@ -11,10 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.models.BlogPost
-import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent
-import com.bsrakdg.blogpost.ui.main.blog.viewmodel.setBlogListData
-import com.bsrakdg.blogpost.ui.main.blog.viewmodel.setBlogPost
-import com.bsrakdg.blogpost.ui.main.blog.viewmodel.setQuery
+import com.bsrakdg.blogpost.ui.DataState
+import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
+import com.bsrakdg.blogpost.ui.main.blog.viewmodel.*
+import com.bsrakdg.blogpost.utils.ErrorHandling
 import com.bsrakdg.blogpost.utils.TopSpacingItemDecoration
 import kotlinx.android.synthetic.main.fragment_blog.*
 
@@ -36,29 +36,17 @@ class BlogFragment : BaseBlogFragment(), BlogListAdapter.Interaction {
 
         initRecyclerView()
         subscribeObservers()
-        executeSearch()
-    }
 
-    private fun executeSearch() {
-        viewModel.setQuery("")
-        viewModel.setStateEvent(
-            BlogStateEvent.BlogSearchEvent()
-        )
+        if (savedInstanceState == null) {
+            viewModel.loadFirstPage()
+        }
     }
 
     private fun subscribeObservers() {
         viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
             if (dataState != null) {
+                handlePagination(dataState)
                 stateChangeListener.onDataStateChange(dataState)
-                dataState.data?.let { data ->
-                    data.data?.let { event ->
-                        event.getContentIfNotHandled()?.let { blogViewState ->
-                            Log.d(TAG, "BlogFragment, dataState: $blogViewState")
-                            viewModel.setBlogListData(blogViewState.blogFields.blogList)
-                        }
-
-                    }
-                }
             }
         })
 
@@ -67,10 +55,40 @@ class BlogFragment : BaseBlogFragment(), BlogListAdapter.Interaction {
             if (viewState != null) {
                 recyclerAdapter.submitList(
                     list = viewState.blogFields.blogList,
-                    isQueryExhausted = true // from the view state later on
+                    isQueryExhausted = viewState.blogFields.isQueryExhausted
                 )
             }
         })
+    }
+
+    private fun handlePagination(dataState: DataState<BlogViewState>) {
+        // handle incoming data from datastate
+        dataState.data?.let { data ->
+            data.data?.let { event ->
+                event.getContentIfNotHandled()?.let { blogViewState ->
+                    Log.d(TAG, "BlogFragment, dataState: $blogViewState")
+                    viewModel.handleIncomingBlogListData(blogViewState)
+                }
+
+            }
+        }
+
+        // check for pagination end (no more result)
+        // must do this b/c server will return ApiErrorResponse if page is not valid
+        // -> Meaning there is no more data
+        dataState.error?.let { event ->
+            event.peekContent().response.message?.let { errorResponse ->
+                if (ErrorHandling.isPaginationDone(errorResponse)) {
+                    // handle the error message event so it does not play on ui
+                    event.getContentIfNotHandled()
+
+                    // set query exhausted to update Recyclcer with
+                    // "No more results..." list item
+                    viewModel.setQueryExhausted(true)
+                }
+            }
+
+        }
     }
 
     private fun initRecyclerView() {
@@ -93,12 +111,14 @@ class BlogFragment : BaseBlogFragment(), BlogListAdapter.Interaction {
             // add scroll listener for pagination
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+
                     super.onScrollStateChanged(recyclerView, newState)
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val lastPosition = layoutManager.findLastVisibleItemPosition()
+
                     if (lastPosition == recyclerAdapter.itemCount.minus(1)) {
                         Log.d(TAG, "BlogFragment : attempting to load next page")
-                        // TODO("load next page using the ViewModel")
+                        viewModel.nextPageNumber()
                     }
                 }
             })
