@@ -2,6 +2,7 @@ package com.bsrakdg.blogpost.ui.main.blog.viewmodel
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
+import com.bsrakdg.blogpost.persistence.BlogQueryUtils
 import com.bsrakdg.blogpost.repository.main.BlogRepository
 import com.bsrakdg.blogpost.session.SessionManager
 import com.bsrakdg.blogpost.ui.BaseViewModel
@@ -11,7 +12,8 @@ import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.*
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
 import com.bsrakdg.blogpost.utils.AbsentLiveData
-import com.bumptech.glide.RequestManager
+import com.bsrakdg.blogpost.utils.PreferenceKeys.Companion.BLOG_FILTER
+import com.bsrakdg.blogpost.utils.PreferenceKeys.Companion.BLOG_ORDER
 import javax.inject.Inject
 
 class BlogViewModel
@@ -20,9 +22,25 @@ constructor(
     private val sessionManager: SessionManager,
     private val blogRepository: BlogRepository,
     private val sharedPreferences: SharedPreferences, // blog filters
-    private val requestManager: RequestManager // for glide
+    private val editor: SharedPreferences.Editor
 
 ) : BaseViewModel<BlogStateEvent, BlogViewState>() {
+
+    init {
+        setBlogFilter(
+            sharedPreferences.getString(
+                BLOG_FILTER,
+                BlogQueryUtils.BLOG_FILTER_DATE_UPDATED
+            )
+        )
+
+        setBlogOrder(
+            sharedPreferences.getString(
+                BLOG_ORDER,
+                BlogQueryUtils.BLOG_ORDER_ASC
+            )!!
+        )
+    }
 
     override fun initNewViewState(): BlogViewState {
         return BlogViewState()
@@ -35,6 +53,7 @@ constructor(
                     blogRepository.searchBlogPosts(
                         authToken = authToken,
                         query = getSearchQuery(),
+                        filterAndOrder = getOrder() + getFilter(),
                         page = getPage()
                     )
                 } ?: AbsentLiveData.create()
@@ -57,6 +76,14 @@ constructor(
                 }
             }
         }
+    }
+
+    fun saveFilterOptions(filter: String, order: String) {
+        editor.putString(BLOG_FILTER, filter)
+        editor.apply()
+
+        editor.putString(BLOG_ORDER, filter)
+        editor.apply()
     }
 
     fun cancelActiveJobs() {
