@@ -42,7 +42,13 @@ interface BlogPostMainService {
     @GET("blog/{slug}/is_author")
     fun isAuthorOfBlogPost(
         @Header("Authorization") authorization: String,
-        @Query("slug") slug: String
+        @Path("slug") slug: String
+    ): LiveData<GenericApiResponse<GenericResponse>>
+
+    @DELETE("blog/{slug}/delete")
+    fun deleteBlogPost(
+        @Header("Authorization") authorization: String,
+        @Path("slug") slug: String
     ): LiveData<GenericApiResponse<GenericResponse>>
 
 }

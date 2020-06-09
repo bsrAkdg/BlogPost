@@ -51,7 +51,7 @@ abstract class BaseBlogFragment : DaggerFragment() {
         }
     }
 
-    private fun cancelActiveJobs() {
+    fun cancelActiveJobs() {
         viewModel.cancelActiveJobs()
     }
 

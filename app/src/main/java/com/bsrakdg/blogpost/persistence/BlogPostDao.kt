@@ -1,10 +1,7 @@
 package com.bsrakdg.blogpost.persistence
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.bsrakdg.blogpost.models.BlogPost
 import com.bsrakdg.blogpost.utils.Constants.Companion.PAGINATION_PAGE_SIZE
 
@@ -13,6 +10,9 @@ interface BlogPostDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplace(blogPost: BlogPost): Long // Long means the row number inserted into database
+
+    @Delete
+    suspend fun deleteBlogPost(blogPost: BlogPost)
 
     @Query("""SELECT * FROM blog_post
         WHERE title LIKE '%' || :query || '%'

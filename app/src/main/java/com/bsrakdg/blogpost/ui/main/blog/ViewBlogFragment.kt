@@ -6,6 +6,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.models.BlogPost
+import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.BlogDeleteEvent
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.CheckAuthorOfBlogPostEvent
 import com.bsrakdg.blogpost.ui.main.blog.viewmodel.isAuthorOfBlogPost
 import com.bsrakdg.blogpost.ui.main.blog.viewmodel.setIsAuthorOfBlogPost
@@ -28,12 +29,14 @@ class ViewBlogFragment : BaseBlogFragment() {
 
         subscribeObservers()
         checkIsAuthorOfBlogPost()
-
         stateChangeListener.expandAppBar()
+
+        delete_button.setOnClickListener {
+            deleteBlogPost()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
         if (viewModel.isAuthorOfBlogPost()) {
             inflater.inflate(R.menu.edit_view_menu, menu)
         }
@@ -95,6 +98,12 @@ class ViewBlogFragment : BaseBlogFragment() {
             longDate = blogPost.date_updated
         )
         blog_body.text = blogPost.body
+    }
+
+    private fun deleteBlogPost() {
+        viewModel.setStateEvent(
+            event = BlogDeleteEvent()
+        )
     }
 
     private fun navUpdateBlogFragment() {

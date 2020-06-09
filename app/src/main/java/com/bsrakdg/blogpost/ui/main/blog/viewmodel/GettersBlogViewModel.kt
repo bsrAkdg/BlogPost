@@ -1,9 +1,31 @@
 package com.bsrakdg.blogpost.ui.main.blog.viewmodel
 
+import com.bsrakdg.blogpost.models.BlogPost
+
+fun BlogViewModel.getBlogPost(): BlogPost {
+    getCurrentViewStateOrNew().let {
+        return it.viewBlogFields.blogPost?.let { blogPost ->
+            return blogPost
+        } ?: getDummyBlogPost()
+    }
+}
+
+fun BlogViewModel.getDummyBlogPost(): BlogPost {
+    return BlogPost(
+        pk = -1,
+        title = "",
+        slug = "",
+        body = "",
+        image = "",
+        date_updated = 1,
+        username = ""
+    )
+}
+
 fun BlogViewModel.getSlug(): String {
     getCurrentViewStateOrNew().let {
-        it.viewBlogFields.blogPost?.let {
-            return it.slug
+        it.viewBlogFields.blogPost?.let { blogPost ->
+            return blogPost.slug
         }
     }
     return ""
