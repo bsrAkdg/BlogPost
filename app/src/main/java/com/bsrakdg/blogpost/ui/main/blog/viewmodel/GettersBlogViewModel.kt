@@ -1,5 +1,20 @@
 package com.bsrakdg.blogpost.ui.main.blog.viewmodel
 
+fun BlogViewModel.getSlug(): String {
+    getCurrentViewStateOrNew().let {
+        it.viewBlogFields.blogPost?.let {
+            return it.slug
+        }
+    }
+    return ""
+}
+
+fun BlogViewModel.isAuthorOfBlogPost(): Boolean {
+    getCurrentViewStateOrNew().let {
+        return it.viewBlogFields.isAuthorOfBlog
+    }
+}
+
 fun BlogViewModel.getFilter(): String {
     getCurrentViewStateOrNew().let {
         return it.blogFields.filter

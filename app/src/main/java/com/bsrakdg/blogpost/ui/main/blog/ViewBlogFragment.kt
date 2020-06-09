@@ -6,6 +6,9 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.models.BlogPost
+import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.CheckAuthorOfBlogPostEvent
+import com.bsrakdg.blogpost.ui.main.blog.viewmodel.isAuthorOfBlogPost
+import com.bsrakdg.blogpost.ui.main.blog.viewmodel.setIsAuthorOfBlogPost
 import com.bsrakdg.blogpost.utils.DateConvertUtils
 import kotlinx.android.synthetic.main.fragment_view_blog.*
 
@@ -24,21 +27,20 @@ class ViewBlogFragment : BaseBlogFragment() {
         setHasOptionsMenu(true)
 
         subscribeObservers()
+        checkIsAuthorOfBlogPost()
+
+        stateChangeListener.expandAppBar()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-
-        // TODO("Check if is user author of  blog")
-        val isAuthorOfBlog = true
-        if (isAuthorOfBlog) {
+        if (viewModel.isAuthorOfBlogPost()) {
             inflater.inflate(R.menu.edit_view_menu, menu)
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val isAuthorOfBlog = true
-        if (isAuthorOfBlog) {
+        if (viewModel.isAuthorOfBlogPost()) {
             when (item.itemId) {
                 R.id.edit -> {
                     navUpdateBlogFragment()
@@ -52,13 +54,34 @@ class ViewBlogFragment : BaseBlogFragment() {
     private fun subscribeObservers() {
         viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
             stateChangeListener.onDataStateChange(dataState)
+            dataState.data?.let { data ->
+                data.data?.getContentIfNotHandled()?.let { viewState ->
+                    viewModel.setIsAuthorOfBlogPost(
+                        viewState.viewBlogFields.isAuthorOfBlog
+                    )
+                }
+            }
         })
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer { blogViewState ->
             blogViewState.viewBlogFields.blogPost?.let { blogPost ->
                 setBlogProperties(blogPost)
             }
+
+            if (blogViewState.viewBlogFields.isAuthorOfBlog) {
+                adaptViewToAuthorMode()
+            }
         })
+    }
+
+    private fun adaptViewToAuthorMode() {
+        activity?.invalidateOptionsMenu()
+        delete_button.visibility = View.VISIBLE
+    }
+
+    private fun checkIsAuthorOfBlogPost() {
+        viewModel.setIsAuthorOfBlogPost(false) // reset
+        viewModel.setStateEvent(CheckAuthorOfBlogPostEvent())
     }
 
     private fun setBlogProperties(blogPost: BlogPost) {

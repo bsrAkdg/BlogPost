@@ -3,6 +3,7 @@ package com.bsrakdg.blogpost.repository.main
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.switchMap
+import com.bsrakdg.blogpost.api.GenericResponse
 import com.bsrakdg.blogpost.api.main.BlogPostMainService
 import com.bsrakdg.blogpost.api.main.network_responses.BlogListSearchResponse
 import com.bsrakdg.blogpost.models.AuthToken
@@ -14,10 +15,12 @@ import com.bsrakdg.blogpost.repository.NetworkBoundResource
 import com.bsrakdg.blogpost.session.SessionManager
 import com.bsrakdg.blogpost.ui.DataState
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
+import com.bsrakdg.blogpost.utils.AbsentLiveData
 import com.bsrakdg.blogpost.utils.ApiSuccessResponse
 import com.bsrakdg.blogpost.utils.Constants.Companion.PAGINATION_PAGE_SIZE
 import com.bsrakdg.blogpost.utils.DateConvertUtils
 import com.bsrakdg.blogpost.utils.GenericApiResponse
+import com.bsrakdg.blogpost.utils.SuccessHandling.Companion.RESPONSE_HAS_PERMISSION_TO_EDIT
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
@@ -148,6 +151,61 @@ constructor(
 
             override fun setJob(job: Job) {
                 addJob("searchBlogPosts", job)
+            }
+
+        }.asLiveData()
+    }
+
+    fun isAuthorOfBlogPost(
+        authToken: AuthToken,
+        slug: String
+    ): LiveData<DataState<BlogViewState>> {
+        return object : NetworkBoundResource<GenericResponse, Any, BlogViewState>(
+            isNetworkAvailable = sessionManager.isConnectedToTheInternet(),
+            isNetworkRequest = true,
+            shouldCancelIfNoInternet = true,
+            shouldLoadFromCache = false
+        ) {
+            override suspend fun createCacheRequestAndReturn() {
+                // not applicable
+            }
+
+            override suspend fun handleApiSuccessResponse(response: ApiSuccessResponse<GenericResponse>) {
+                withContext(Main) {
+
+                    Log.d(TAG, "handleApiSuccessResponse:${response.body.response}")
+
+                    onCompleteJob(
+                        dataState = DataState.data(
+                            data = BlogViewState(
+                                viewBlogFields = BlogViewState.ViewBlogFields(
+                                    isAuthorOfBlog = response.body.response == RESPONSE_HAS_PERMISSION_TO_EDIT
+                                )
+                            ),
+                            response = null
+                        )
+                    )
+                }
+            }
+
+            override fun createCall(): LiveData<GenericApiResponse<GenericResponse>> {
+                return blogPostMainService.isAuthorOfBlogPost(
+                    authorization = "Token ${authToken.token!!}",
+                    slug = slug
+                )
+            }
+
+            override fun loadFromCache(): LiveData<BlogViewState> {
+                // not applicable
+                return AbsentLiveData.create()
+            }
+
+            override suspend fun updateLocalDb(cacheObject: Any?) {
+                // not applicable
+            }
+
+            override fun setJob(job: Job) {
+                addJob("isAuthorOfBlogPost", job)
             }
 
         }.asLiveData()
