@@ -82,7 +82,7 @@ constructor(
         editor.putString(BLOG_FILTER, filter)
         editor.apply()
 
-        editor.putString(BLOG_ORDER, filter)
+        editor.putString(BLOG_ORDER, order)
         editor.apply()
     }
 

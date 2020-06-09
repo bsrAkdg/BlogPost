@@ -41,6 +41,8 @@ constructor(
         filterAndOrder: String,
         page: Int
     ): LiveData<DataState<BlogViewState>> {
+        Log.d(TAG, "authToken: $authToken, query: $query, filterAndOrder: $filterAndOrder, page: $page")
+
         return object : NetworkBoundResource<BlogListSearchResponse, List<BlogPost>, BlogViewState>(
             isNetworkAvailable = sessionManager.isConnectedToTheInternet(),
             isNetworkRequest = true,
