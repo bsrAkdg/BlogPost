@@ -1,6 +1,26 @@
 package com.bsrakdg.blogpost.ui.main.blog.viewmodel
 
+import android.net.Uri
 import com.bsrakdg.blogpost.models.BlogPost
+
+fun BlogViewModel.setUpdatedBlogFields(
+    title : String?,
+    body : String?,
+    uri : Uri?
+) {
+    val update = getCurrentViewStateOrNew()
+    val updatedBlogFields = update.updateBlogFields
+    title?.let {
+        updatedBlogFields.updatedBlogTitle = it
+    }
+    body?.let {
+        updatedBlogFields.updatedBlogBody = it
+    }
+    uri?.let {
+        updatedBlogFields.updatedImageUri = it
+    }
+    setViewState(update)
+}
 
 fun BlogViewModel.removeDeletedBlogPost() {
     val update = getCurrentViewStateOrNew()

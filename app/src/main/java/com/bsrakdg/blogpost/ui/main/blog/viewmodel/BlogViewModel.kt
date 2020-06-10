@@ -14,6 +14,8 @@ import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
 import com.bsrakdg.blogpost.utils.AbsentLiveData
 import com.bsrakdg.blogpost.utils.PreferenceKeys.Companion.BLOG_FILTER
 import com.bsrakdg.blogpost.utils.PreferenceKeys.Companion.BLOG_ORDER
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 class BlogViewModel
@@ -73,6 +75,25 @@ constructor(
                     blogRepository.deleteBlogPost(
                         authToken = authToken,
                         blogPost = getBlogPost()
+                    )
+                } ?: AbsentLiveData.create()
+            }
+
+            is UpdatedBlogPostEvent -> {
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    blogRepository.updateBlogPost(
+                        authToken = authToken,
+                        slug = getSlug(),
+                        title = RequestBody.create(
+                            MediaType.parse("text/plain"),
+                            stateEvent.title
+                        ),
+                        body = RequestBody.create(
+                            MediaType.parse("text/plain"),
+                            stateEvent.body
+                        ),
+                        image = stateEvent.image
+
                     )
                 } ?: AbsentLiveData.create()
             }
