@@ -3,6 +3,29 @@ package com.bsrakdg.blogpost.ui.main.blog.viewmodel
 import android.net.Uri
 import com.bsrakdg.blogpost.models.BlogPost
 
+fun BlogViewModel.onBlogPostUpdateSuccess(blogPost: BlogPost) {
+    // update UpdateBlogFragment
+    setUpdatedBlogFields(
+        uri = null,
+        title = blogPost.title,
+        body = blogPost.body
+    )
+    setBlogPost(blogPost) // update ViewBlogFragment
+    updateListItem(blogPost) // update BlogFragment
+}
+
+fun BlogViewModel.updateListItem(newBlogPost: BlogPost) {
+    val update = getCurrentViewStateOrNew()
+    val list = update.blogFields.blogList.toMutableList()
+    for (i in 0 until list.size) {
+        if (list[i].pk == newBlogPost.pk) {
+            list[i] = newBlogPost
+            break
+        }
+    }
+    setBlogListData(list)
+}
+
 fun BlogViewModel.setUpdatedBlogFields(
     title : String?,
     body : String?,

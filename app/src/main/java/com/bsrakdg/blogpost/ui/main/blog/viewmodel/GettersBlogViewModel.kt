@@ -1,6 +1,16 @@
 package com.bsrakdg.blogpost.ui.main.blog.viewmodel
 
+import android.net.Uri
 import com.bsrakdg.blogpost.models.BlogPost
+
+fun BlogViewModel.getUpdatedBlogUri(): Uri? {
+    getCurrentViewStateOrNew()?.let {
+        it.updateBlogFields.updatedImageUri?.let { uri ->
+            return uri
+        }
+    }
+    return null
+}
 
 fun BlogViewModel.getBlogPost(): BlogPost {
     getCurrentViewStateOrNew().let {
