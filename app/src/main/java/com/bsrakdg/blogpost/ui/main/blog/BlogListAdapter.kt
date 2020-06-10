@@ -136,6 +136,17 @@ class BlogListAdapter(
         differ.submitList(newList)
     }
 
+    fun preLoadGlideImages(
+        requestManager: RequestManager,
+        list: List<BlogPost>
+    ) {
+        for (blogPost in list) {
+            requestManager
+                .load(blogPost.image)
+                .preload()
+        }
+    }
+
     class BlogViewHolder
     constructor(
         itemView: View,
