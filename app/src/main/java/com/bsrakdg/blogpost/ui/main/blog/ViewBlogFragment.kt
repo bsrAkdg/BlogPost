@@ -6,11 +6,16 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.models.BlogPost
+import com.bsrakdg.blogpost.ui.AreYouSureCallback
+import com.bsrakdg.blogpost.ui.UIMessage
+import com.bsrakdg.blogpost.ui.UIMessageType
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.BlogDeleteEvent
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.CheckAuthorOfBlogPostEvent
 import com.bsrakdg.blogpost.ui.main.blog.viewmodel.isAuthorOfBlogPost
+import com.bsrakdg.blogpost.ui.main.blog.viewmodel.removeDeletedBlogPost
 import com.bsrakdg.blogpost.ui.main.blog.viewmodel.setIsAuthorOfBlogPost
 import com.bsrakdg.blogpost.utils.DateConvertUtils
+import com.bsrakdg.blogpost.utils.SuccessHandling.Companion.SUCCESS_BLOG_DELETED
 import kotlinx.android.synthetic.main.fragment_view_blog.*
 
 class ViewBlogFragment : BaseBlogFragment() {
@@ -32,7 +37,7 @@ class ViewBlogFragment : BaseBlogFragment() {
         stateChangeListener.expandAppBar()
 
         delete_button.setOnClickListener {
-            deleteBlogPost()
+            confirmDeleteRequest()
         }
     }
 
@@ -62,6 +67,13 @@ class ViewBlogFragment : BaseBlogFragment() {
                     viewModel.setIsAuthorOfBlogPost(
                         viewState.viewBlogFields.isAuthorOfBlog
                     )
+                }
+
+                data.response?.peekContent()?.let { response ->
+                    if (response.message.equals(SUCCESS_BLOG_DELETED)) {
+                        viewModel.removeDeletedBlogPost()
+                        findNavController().popBackStack()
+                    }
                 }
             }
         })
@@ -103,6 +115,26 @@ class ViewBlogFragment : BaseBlogFragment() {
     private fun deleteBlogPost() {
         viewModel.setStateEvent(
             event = BlogDeleteEvent()
+        )
+    }
+
+    private fun confirmDeleteRequest() {
+        val callback: AreYouSureCallback = object : AreYouSureCallback {
+            override fun proceed() {
+                deleteBlogPost()
+            }
+
+            override fun cancel() {
+                // ignore
+            }
+        }
+        uiCommunicationListener.onUIMessageReceived(
+            uiMessage = UIMessage(
+                message = getString(R.string.are_you_sure_delete),
+                uiMessageType = UIMessageType.AreYouSureDialog(
+                    callback = callback
+                )
+            )
         )
     }
 

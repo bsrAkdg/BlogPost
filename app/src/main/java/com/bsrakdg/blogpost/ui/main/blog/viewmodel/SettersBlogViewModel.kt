@@ -2,6 +2,18 @@ package com.bsrakdg.blogpost.ui.main.blog.viewmodel
 
 import com.bsrakdg.blogpost.models.BlogPost
 
+fun BlogViewModel.removeDeletedBlogPost() {
+    val update = getCurrentViewStateOrNew()
+    val list = update.blogFields.blogList.toMutableList()
+    for (i in 0 until list.size) {
+        if (list[i] == getBlogPost()) {
+            list.remove(getBlogPost())
+            break
+        }
+    }
+    setBlogListData(list)
+}
+
 fun BlogViewModel.setQuery(query: String) {
     val update = getCurrentViewStateOrNew()
     update.blogFields.searchQuery = query

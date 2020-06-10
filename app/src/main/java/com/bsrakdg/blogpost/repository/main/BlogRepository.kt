@@ -263,7 +263,7 @@ constructor(
                         dataState = DataState.data(
                             data = null,
                             response = Response(
-                                message = SUCCESS_BLOG_DELETED,
+                                message = SUCCESS_BLOG_DELETED, // check on fragment update ui list
                                 responseType = ResponseType.Toast()
                             )
                         )

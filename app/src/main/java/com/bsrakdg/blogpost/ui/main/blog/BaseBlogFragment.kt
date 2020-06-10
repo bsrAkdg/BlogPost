@@ -11,6 +11,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.ui.DataStateChangeListener
+import com.bsrakdg.blogpost.ui.UICommunicationListener
 import com.bsrakdg.blogpost.ui.main.blog.viewmodel.BlogViewModel
 import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
 import com.bumptech.glide.RequestManager
@@ -21,7 +22,9 @@ abstract class BaseBlogFragment : DaggerFragment() {
 
     val TAG: String = "BaseBlogFragment"
 
-    lateinit var stateChangeListener: DataStateChangeListener
+    lateinit var stateChangeListener: DataStateChangeListener // network response dialogs
+
+    lateinit var uiCommunicationListener: UICommunicationListener // application dialogs
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
@@ -48,6 +51,12 @@ abstract class BaseBlogFragment : DaggerFragment() {
             stateChangeListener = context as DataStateChangeListener
         } catch (e: ClassCastException) {
             Log.e(TAG, "$context must implement DataStateChangeListener")
+        }
+
+        try {
+            uiCommunicationListener = context as UICommunicationListener
+        } catch (e: ClassCastException) {
+            Log.e(TAG, "$context must implement UICommunicationListener")
         }
     }
 

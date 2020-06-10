@@ -4,18 +4,44 @@ import android.content.Context
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import com.bsrakdg.blogpost.session.SessionManager
+import com.bsrakdg.blogpost.ui.UIMessageType.*
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-abstract class BaseActivity : DaggerAppCompatActivity(), DataStateChangeListener {
+abstract class BaseActivity : DaggerAppCompatActivity(),
+    DataStateChangeListener,
+    UICommunicationListener {
 
     protected val TAG: String = "BaseActivity"
 
     @Inject
     lateinit var sessionManager: SessionManager
+
+    override fun onUIMessageReceived(uiMessage: UIMessage) {
+        when (uiMessage.uiMessageType) {
+            is AreYouSureDialog -> {
+                areYouSureDialog(
+                    message = uiMessage.message,
+                    callBack = uiMessage.uiMessageType.callback
+                )
+            }
+
+            is Toast -> {
+                displayToast(message = uiMessage.message)
+            }
+
+            is Dialog -> {
+                displayInfoDialog(message = uiMessage.message)
+            }
+
+            is None -> {
+                Log.d(TAG, "onUIMessageReceived: ${uiMessage.message}")
+            }
+        }
+    }
 
     override fun onDataStateChange(dataState: DataState<*>?) {
         dataState?.let {
