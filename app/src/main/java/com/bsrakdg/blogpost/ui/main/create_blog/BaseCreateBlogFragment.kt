@@ -5,22 +5,39 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.ui.DataStateChangeListener
+import com.bsrakdg.blogpost.ui.UICommunicationListener
+import com.bsrakdg.blogpost.ui.main.create_blog.viewmodel.CreateBlogViewModel
+import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
 import dagger.android.support.DaggerFragment
+import javax.inject.Inject
 
 abstract class BaseCreateBlogFragment : DaggerFragment(){
 
     val TAG: String = "BaseCreateBlogFragment"
 
+    @Inject
+    lateinit var providerFactory: ViewModelProviderFactory
+
+
     lateinit var stateChangeListener: DataStateChangeListener
+
+    lateinit var uiCommunicationListener: UICommunicationListener
+
+    lateinit var viewModel: CreateBlogViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupActionBarWithNavController(R.id.createBlogFragment, activity as AppCompatActivity)
+
+        viewModel = activity?.run {
+            ViewModelProvider(this, providerFactory).get(CreateBlogViewModel::class.java)
+        } ?: throw Exception("Invalid Activity")
 
         cancelActiveJobs()
     }
@@ -31,6 +48,12 @@ abstract class BaseCreateBlogFragment : DaggerFragment(){
             stateChangeListener = context as DataStateChangeListener
         } catch (e: ClassCastException) {
             Log.e(TAG, "$context must implement DataStateChangeListener")
+        }
+
+        try {
+            uiCommunicationListener = context as UICommunicationListener
+        } catch (e: ClassCastException) {
+            Log.e(TAG, "$context must implement UICommunicationListener")
         }
     }
 

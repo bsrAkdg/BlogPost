@@ -6,6 +6,7 @@ import com.bsrakdg.blogpost.persistence.AppDatabase
 import com.bsrakdg.blogpost.persistence.BlogPostDao
 import com.bsrakdg.blogpost.repository.main.AccountRepository
 import com.bsrakdg.blogpost.repository.main.BlogRepository
+import com.bsrakdg.blogpost.repository.main.CreateBlogRepository
 import com.bsrakdg.blogpost.session.SessionManager
 import dagger.Module
 import dagger.Provides
@@ -50,6 +51,20 @@ class MainModule {
         sessionManager: SessionManager
     ): BlogRepository {
         return BlogRepository(
+            blogPostMainService = blogPostMainService,
+            blogPostDao = blogPostDao,
+            sessionManager = sessionManager
+        )
+    }
+
+    @MainScope
+    @Provides
+    fun provideCreateBlogRepository(
+        blogPostMainService: BlogPostMainService,
+        blogPostDao: BlogPostDao,
+        sessionManager: SessionManager
+    ): CreateBlogRepository {
+        return CreateBlogRepository(
             blogPostMainService = blogPostMainService,
             blogPostDao = blogPostDao,
             sessionManager = sessionManager
