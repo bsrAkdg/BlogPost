@@ -14,6 +14,7 @@ import com.bsrakdg.blogpost.ui.DataStateChangeListener
 import com.bsrakdg.blogpost.ui.UICommunicationListener
 import com.bsrakdg.blogpost.ui.main.create_blog.viewmodel.CreateBlogViewModel
 import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
+import com.bumptech.glide.RequestManager
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -24,6 +25,8 @@ abstract class BaseCreateBlogFragment : DaggerFragment(){
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
 
+    @Inject
+    lateinit var requestManager: RequestManager
 
     lateinit var stateChangeListener: DataStateChangeListener
 

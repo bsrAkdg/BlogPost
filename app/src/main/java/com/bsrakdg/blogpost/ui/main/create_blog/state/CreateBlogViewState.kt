@@ -10,6 +10,6 @@ data class CreateBlogViewState(
     data class NewBlogFields(
         var newBlogTitle: String? = null,
         var newBlogBody: String? = null,
-        var newImageUrl: Uri? = null
+        var newImageUri: Uri? = null
     )
 }

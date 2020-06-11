@@ -13,7 +13,7 @@ fun CreateBlogViewModel.setNewBlogFields(
     val newBlogFields = update.blogFields
     title?.let { newBlogFields.newBlogTitle = it }
     body?.let { newBlogFields.newBlogBody = it }
-    uri?.let { newBlogFields.newImageUrl = it }
+    uri?.let { newBlogFields.newImageUri = it }
     update.blogFields = newBlogFields
     setViewState(update)
 }
