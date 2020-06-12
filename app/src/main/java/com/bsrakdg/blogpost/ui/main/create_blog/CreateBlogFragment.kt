@@ -217,7 +217,9 @@ class CreateBlogFragment : BaseCreateBlogFragment() {
                     MediaType.parse("image/*"),
                     imageFile
                 )
-
+                // name = field name in serializer
+                // filename = name of the image file
+                // requestBody = file with file type information
                 multiPartBody = MultipartBody.Part.createFormData(
                     "image",
                     imageFile.name,
