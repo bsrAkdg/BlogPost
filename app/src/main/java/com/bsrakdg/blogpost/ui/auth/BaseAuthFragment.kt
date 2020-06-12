@@ -2,12 +2,13 @@ package com.bsrakdg.blogpost.ui.auth
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.bsrakdg.blogpost.di.Injectable
 import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
-import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-abstract class BaseAuthFragment : DaggerFragment() {
+abstract class BaseAuthFragment : Fragment(), Injectable {
 
     val TAG: String = "BaseAuthFragment"
 
