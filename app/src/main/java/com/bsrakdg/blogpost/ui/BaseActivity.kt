@@ -75,7 +75,7 @@ abstract class BaseActivity : DaggerAppCompatActivity(),
                 }
 
                 is ResponseType.Dialog -> {
-                    response.message?.let { message -> displayErrorDialog(message) }
+                    response.message?.let { message -> displaySuccessDialog(message) }
                 }
 
                 is ResponseType.None -> {

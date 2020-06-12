@@ -12,6 +12,8 @@ import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogStateEvent.Creat
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogStateEvent.None
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogViewState
 import com.bsrakdg.blogpost.utils.AbsentLiveData
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 class CreateBlogViewModel
@@ -28,7 +30,25 @@ constructor(
     override fun handleStateEvent(stateEvent: CreateBlogStateEvent): LiveData<DataState<CreateBlogViewState>> {
         when (stateEvent) {
             is CreateNewBlogEvent -> {
-                return AbsentLiveData.create()
+                return sessionManager.cachedToken.value?.let { authToken ->
+                    val title = RequestBody.create(
+                        MediaType.parse("text/plain"),
+                        stateEvent.title
+                    )
+
+                    val body = RequestBody.create(
+                        MediaType.parse("text/plain"),
+                        stateEvent.body
+                    )
+
+                    createBlogRepository.createNewBlogPost(
+                        authToken = authToken,
+                        title = title,
+                        body = body,
+                        image = stateEvent.image
+
+                    )
+                } ?: AbsentLiveData.create()
             }
 
             is None -> {
