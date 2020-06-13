@@ -13,19 +13,17 @@ import androidx.navigation.ui.NavigationUI
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.di.Injectable
 import com.bsrakdg.blogpost.ui.DataStateChangeListener
-import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
-import javax.inject.Inject
+import com.bsrakdg.blogpost.ui.main.MainDependencyProvider
 
 abstract class BaseAccountFragment : Fragment(), Injectable {
 
     val TAG: String = "BaseAccountFragment"
 
-    @Inject
-    lateinit var providerFactory: ViewModelProviderFactory
-
     lateinit var viewModel: AccountViewModel
 
     lateinit var stateChangeListener: DataStateChangeListener
+
+    lateinit var dependencyProvider: MainDependencyProvider
 
     private fun setupActionBarWithNavController(fragmentId: Int, activity: AppCompatActivity) {
         val appBarConfiguration = AppBarConfiguration(setOf(fragmentId))
@@ -41,7 +39,8 @@ abstract class BaseAccountFragment : Fragment(), Injectable {
         setupActionBarWithNavController(R.id.accountFragment, activity as AppCompatActivity)
 
         viewModel = activity?.run {
-            ViewModelProvider(this, providerFactory).get(AccountViewModel::class.java)
+            ViewModelProvider(this, dependencyProvider.getViewModelProviderFactory())
+                .get(AccountViewModel::class.java)
         } ?: throw Exception("Invalid Activity")
 
         cancelActiveJobs()
@@ -57,6 +56,12 @@ abstract class BaseAccountFragment : Fragment(), Injectable {
             stateChangeListener = context as DataStateChangeListener
         } catch (e: ClassCastException) {
             Log.e(TAG, "$context must implement DataStateChangeListener")
+        }
+
+        try {
+            dependencyProvider = context as MainDependencyProvider
+        } catch (e: ClassCastException) {
+            Log.e(TAG, "$context must implement MainDependencyProvider")
         }
     }
 }

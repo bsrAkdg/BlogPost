@@ -88,7 +88,7 @@ class BlogFragment : BaseBlogFragment(),
             if (viewState != null) {
                 recyclerAdapter.apply {
                     preLoadGlideImages(
-                        requestManager,
+                        dependencyProvider.getGlideRequestManager(),
                         viewState.blogFields.blogList
                     )
 
@@ -182,7 +182,7 @@ class BlogFragment : BaseBlogFragment(),
             // create adapter
             recyclerAdapter = BlogListAdapter(
                 interaction = this@BlogFragment,
-                requestManager = requestManager
+                requestManager = dependencyProvider.getGlideRequestManager()
             )
 
             // add scroll listener for pagination

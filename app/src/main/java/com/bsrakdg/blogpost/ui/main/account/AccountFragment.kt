@@ -60,10 +60,9 @@ class AccountFragment : BaseAccountFragment() {
 
         // Update View Model
         viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
-            stateChangeListener.onDataStateChange(dataState)
-
-            dataState?.let {
-                it.data?.let { data ->
+            if (dataState != null) {
+                stateChangeListener.onDataStateChange(dataState)
+                dataState.data?.let { data ->
                     data.data?.let { event ->
                         event.getContentIfNotHandled()?.let { accountViewState ->
                             accountViewState.accountProperties?.let { accountProperties ->

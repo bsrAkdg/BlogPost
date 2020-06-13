@@ -14,20 +14,14 @@ import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.di.Injectable
 import com.bsrakdg.blogpost.ui.DataStateChangeListener
 import com.bsrakdg.blogpost.ui.UICommunicationListener
+import com.bsrakdg.blogpost.ui.main.MainDependencyProvider
 import com.bsrakdg.blogpost.ui.main.create_blog.viewmodel.CreateBlogViewModel
-import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
-import com.bumptech.glide.RequestManager
-import javax.inject.Inject
 
 abstract class BaseCreateBlogFragment : Fragment(), Injectable {
 
     val TAG: String = "BaseCreateBlogFragment"
 
-    @Inject
-    lateinit var providerFactory: ViewModelProviderFactory
-
-    @Inject
-    lateinit var requestManager: RequestManager
+    lateinit var dependencyProvider: MainDependencyProvider
 
     lateinit var stateChangeListener: DataStateChangeListener
 
@@ -40,7 +34,8 @@ abstract class BaseCreateBlogFragment : Fragment(), Injectable {
         setupActionBarWithNavController(R.id.createBlogFragment, activity as AppCompatActivity)
 
         viewModel = activity?.run {
-            ViewModelProvider(this, providerFactory).get(CreateBlogViewModel::class.java)
+            ViewModelProvider(this, dependencyProvider.getViewModelProviderFactory())
+                .get(CreateBlogViewModel::class.java)
         } ?: throw Exception("Invalid Activity")
 
         cancelActiveJobs()
@@ -58,6 +53,12 @@ abstract class BaseCreateBlogFragment : Fragment(), Injectable {
             uiCommunicationListener = context as UICommunicationListener
         } catch (e: ClassCastException) {
             Log.e(TAG, "$context must implement UICommunicationListener")
+        }
+
+        try {
+            dependencyProvider = context as MainDependencyProvider
+        } catch (e: ClassCastException) {
+            Log.e(TAG, "$context must implement MainDependencyProvider")
         }
     }
 

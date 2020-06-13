@@ -14,19 +14,24 @@ import com.bsrakdg.blogpost.ui.auth.AuthActivity
 import com.bsrakdg.blogpost.ui.main.account.BaseAccountFragment
 import com.bsrakdg.blogpost.ui.main.account.ChangePasswordFragment
 import com.bsrakdg.blogpost.ui.main.account.UpdateAccountFragment
+import com.bsrakdg.blogpost.ui.main.blog.BaseBlogFragment
 import com.bsrakdg.blogpost.ui.main.blog.UpdateBlogFragment
 import com.bsrakdg.blogpost.ui.main.blog.ViewBlogFragment
 import com.bsrakdg.blogpost.ui.main.create_blog.BaseCreateBlogFragment
 import com.bsrakdg.blogpost.utils.BottomNavController
 import com.bsrakdg.blogpost.utils.setUpNavigation
+import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
+import com.bumptech.glide.RequestManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
 class MainActivity : BaseActivity(),
     BottomNavController.NavGraphProvider,
     BottomNavController.OnNavigationGraphChanged,
-    BottomNavController.OnNavigationReselectedListener {
+    BottomNavController.OnNavigationReselectedListener,
+    MainDependencyProvider {
 
     private lateinit var bottomNavView: BottomNavigationView
 
@@ -39,6 +44,16 @@ class MainActivity : BaseActivity(),
             navGraphProvider = this
         )
     }
+
+    @Inject
+    lateinit var providerFactory: ViewModelProviderFactory
+
+    @Inject
+    lateinit var requestManager: RequestManager
+
+    override fun getViewModelProviderFactory() = providerFactory
+
+    override fun getGlideRequestManager() = requestManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,7 +128,7 @@ class MainActivity : BaseActivity(),
         if (fragments != null) {
             for (fragment in fragments) {
                 when (fragment) {
-                    is BaseAccountFragment -> fragment.cancelActiveJobs()
+                    is BaseBlogFragment -> fragment.cancelActiveJobs()
                     is BaseCreateBlogFragment -> fragment.cancelActiveJobs()
                     is BaseAccountFragment -> fragment.cancelActiveJobs()
                 }
