@@ -14,6 +14,8 @@ import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.di.Injectable
 import com.bsrakdg.blogpost.ui.DataStateChangeListener
 import com.bsrakdg.blogpost.ui.main.MainDependencyProvider
+import com.bsrakdg.blogpost.ui.main.account.state.ACCOUNT_VIEW_STATE_BUNDLE_KEY
+import com.bsrakdg.blogpost.ui.main.account.state.AccountViewState
 
 abstract class BaseAccountFragment : Fragment(), Injectable {
 
@@ -34,9 +36,20 @@ abstract class BaseAccountFragment : Fragment(), Injectable {
         )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupActionBarWithNavController(R.id.accountFragment, activity as AppCompatActivity)
+    override fun onSaveInstanceState(outState: Bundle) {
+        if (isViewModelInitialized()) {
+            outState.putParcelable(
+                ACCOUNT_VIEW_STATE_BUNDLE_KEY,
+                viewModel.viewState.value
+            )
+        }
+        super.onSaveInstanceState(outState)
+    }
+
+    private fun isViewModelInitialized() = ::viewModel.isInitialized
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         viewModel = activity?.run {
             ViewModelProvider(this, dependencyProvider.getViewModelProviderFactory())
@@ -44,6 +57,18 @@ abstract class BaseAccountFragment : Fragment(), Injectable {
         } ?: throw Exception("Invalid Activity")
 
         cancelActiveJobs()
+
+        //restore state after process death
+        savedInstanceState?.let { inState ->
+            (inState[ACCOUNT_VIEW_STATE_BUNDLE_KEY] as AccountViewState?)?.let { accountViewState ->
+                viewModel.setViewState(accountViewState)
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupActionBarWithNavController(R.id.accountFragment, activity as AppCompatActivity)
     }
 
     fun cancelActiveJobs() {
