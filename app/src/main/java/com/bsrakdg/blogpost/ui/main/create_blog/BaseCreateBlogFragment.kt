@@ -15,6 +15,8 @@ import com.bsrakdg.blogpost.di.Injectable
 import com.bsrakdg.blogpost.ui.DataStateChangeListener
 import com.bsrakdg.blogpost.ui.UICommunicationListener
 import com.bsrakdg.blogpost.ui.main.MainDependencyProvider
+import com.bsrakdg.blogpost.ui.main.create_blog.state.CREATE_BLOG_VIEW_STATE_BUNDLE_KEY
+import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogViewState
 import com.bsrakdg.blogpost.ui.main.create_blog.viewmodel.CreateBlogViewModel
 
 abstract class BaseCreateBlogFragment : Fragment(), Injectable {
@@ -29,9 +31,20 @@ abstract class BaseCreateBlogFragment : Fragment(), Injectable {
 
     lateinit var viewModel: CreateBlogViewModel
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupActionBarWithNavController(R.id.createBlogFragment, activity as AppCompatActivity)
+    override fun onSaveInstanceState(outState: Bundle) {
+        if (isViewModelInitialized()) {
+            outState.putParcelable(
+                CREATE_BLOG_VIEW_STATE_BUNDLE_KEY,
+                viewModel.viewState.value
+            )
+        }
+        super.onSaveInstanceState(outState)
+    }
+
+    private fun isViewModelInitialized() = ::viewModel.isInitialized
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         viewModel = activity?.run {
             ViewModelProvider(this, dependencyProvider.getViewModelProviderFactory())
@@ -39,6 +52,18 @@ abstract class BaseCreateBlogFragment : Fragment(), Injectable {
         } ?: throw Exception("Invalid Activity")
 
         cancelActiveJobs()
+
+        //restore state after process death
+        savedInstanceState?.let { inState ->
+            (inState[CREATE_BLOG_VIEW_STATE_BUNDLE_KEY] as CreateBlogViewState?)?.let { createBlogViewState ->
+                viewModel.setViewState(createBlogViewState)
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupActionBarWithNavController(R.id.createBlogFragment, activity as AppCompatActivity)
     }
 
     override fun onAttach(context: Context) {
@@ -63,7 +88,7 @@ abstract class BaseCreateBlogFragment : Fragment(), Injectable {
     }
 
     fun cancelActiveJobs() {
-        // viewModel.cancelActiveJobs()
+        viewModel.cancelActiveJobs()
     }
 
     private fun setupActionBarWithNavController(fragmentId: Int, activity: AppCompatActivity) {
