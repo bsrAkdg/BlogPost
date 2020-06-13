@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import com.bsrakdg.blogpost.R
+import com.bsrakdg.blogpost.models.AUTH_TOKEN_BUNDLE_KEY
+import com.bsrakdg.blogpost.models.AuthToken
 import com.bsrakdg.blogpost.ui.BaseActivity
 import com.bsrakdg.blogpost.ui.auth.AuthActivity
 import com.bsrakdg.blogpost.ui.main.account.BaseAccountFragment
@@ -55,6 +57,19 @@ class MainActivity : BaseActivity(),
 
     override fun getGlideRequestManager() = requestManager
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelable(AUTH_TOKEN_BUNDLE_KEY, sessionManager.cachedToken.value)
+        super.onSaveInstanceState(outState)
+    }
+
+    private fun onRestoreSession(savedInstanceState: Bundle?) {
+        savedInstanceState?.let { bundle ->
+            bundle[AUTH_TOKEN_BUNDLE_KEY]?.let { authToken ->
+                sessionManager.setValue(authToken as AuthToken)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -70,6 +85,8 @@ class MainActivity : BaseActivity(),
         }
 
         subscribeObservers()
+
+        onRestoreSession(savedInstanceState)
     }
 
     private fun setupActionBar() {

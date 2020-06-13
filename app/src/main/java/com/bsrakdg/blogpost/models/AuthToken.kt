@@ -10,6 +10,8 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
+const val AUTH_TOKEN_BUNDLE_KEY = "com.bsrakdg.blogpost.models.AuthToken"
+
 @Parcelize
 @Entity(
     tableName = "auth_token",
