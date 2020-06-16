@@ -20,6 +20,7 @@ import com.bsrakdg.blogpost.ui.main.blog.BaseBlogFragment
 import com.bsrakdg.blogpost.ui.main.blog.UpdateBlogFragment
 import com.bsrakdg.blogpost.ui.main.blog.ViewBlogFragment
 import com.bsrakdg.blogpost.ui.main.create_blog.BaseCreateBlogFragment
+import com.bsrakdg.blogpost.utils.BOTTOM_NAV_BACKSTACK_KEY
 import com.bsrakdg.blogpost.utils.BottomNavController
 import com.bsrakdg.blogpost.utils.setUpNavigation
 import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
@@ -59,6 +60,8 @@ class MainActivity : BaseActivity(),
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(AUTH_TOKEN_BUNDLE_KEY, sessionManager.cachedToken.value)
+        // save tab back stack for configuration change
+        outState.putIntArray(BOTTOM_NAV_BACKSTACK_KEY, bottomNavController.navigationBackStack.toIntArray())
         super.onSaveInstanceState(outState)
     }
 
@@ -70,22 +73,30 @@ class MainActivity : BaseActivity(),
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        setupActionBar()
-
+    private fun setupBottomNavigationView(savedInstanceState: Bundle?) {
         bottomNavView = findViewById(R.id.bottom_navigation_view)
         bottomNavView.setUpNavigation(bottomNavController, this)
 
         if (savedInstanceState == null) {
             // parameters is null because, default selected item is navBackStack.last() on onNavItemSelected
+            bottomNavController.setupBottomNavigationBackStack(null)
             bottomNavController.onNavigationItemSelected()
+        } else {
+            (savedInstanceState[BOTTOM_NAV_BACKSTACK_KEY] as IntArray?)?.let { items ->
+                val backStack = BottomNavController.BackStack()
+                backStack.addAll(items.toTypedArray())
+                bottomNavController.setupBottomNavigationBackStack(backStack)
+            }
         }
+    }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        setupActionBar()
+        setupBottomNavigationView(savedInstanceState)
         subscribeObservers()
-
         onRestoreSession(savedInstanceState)
     }
 

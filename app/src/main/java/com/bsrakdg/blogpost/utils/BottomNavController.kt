@@ -2,6 +2,7 @@ package com.bsrakdg.blogpost.utils
 
 import android.app.Activity
 import android.content.Context
+import android.os.Parcelable
 import androidx.annotation.IdRes
 import androidx.annotation.NavigationRes
 import androidx.fragment.app.Fragment
@@ -12,12 +13,14 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.bsrakdg.blogpost.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.android.parcel.Parcelize
 
 /**
  * Class credit: Allan Veloso
  * https://stackoverflow.com/a/54505502
  * @property navigationBackStack: Backstack for the bottom navigation
  */
+const val BOTTOM_NAV_BACKSTACK_KEY = "com.bsrakdg.blogpost.utils.BottomNavController.BackStack"
 
 class BottomNavController(
     val context: Context,
@@ -26,18 +29,22 @@ class BottomNavController(
     val graphChangeListener: OnNavigationGraphChanged?, // should be optional
     val navGraphProvider: NavGraphProvider // required
 ) {
-    private val TAG: String = "BottomNavController"
-    private val navigationBackStack = BackStack.of(appStartDestinationId)
+    lateinit var navigationBackStack: BackStack
     lateinit var activity: Activity
     lateinit var fragmentManager: FragmentManager
     lateinit var navItemChangeListener: OnNavigationItemChanged
-
 
     init {
         if (context is Activity) {
             activity = context
             fragmentManager = (activity as FragmentActivity).supportFragmentManager
         }
+    }
+
+    fun setupBottomNavigationBackStack(previousBackStack: BackStack?) {
+        navigationBackStack = previousBackStack?.let {
+            it
+        } ?: BackStack.of(appStartDestinationId)
     }
 
     fun onNavigationItemSelected(itemId: Int = navigationBackStack.last()): Boolean {
@@ -101,7 +108,8 @@ class BottomNavController(
         }
     }
 
-    private class BackStack : ArrayList<Int>() {
+    @Parcelize
+    class BackStack : ArrayList<Int>(), Parcelable {
         companion object {
             fun of(vararg elements: Int): BackStack {
                 val b = BackStack()
@@ -117,7 +125,6 @@ class BottomNavController(
             add(item) // add(3) -> 1, 2, 4, 3
         }
     }
-
 
     // For setting the checked icon in the bottom nav
     interface OnNavigationItemChanged {
@@ -151,7 +158,6 @@ class BottomNavController(
             }
         }
     }
-
 }
 
 // Convenience extension to set up the navigation
