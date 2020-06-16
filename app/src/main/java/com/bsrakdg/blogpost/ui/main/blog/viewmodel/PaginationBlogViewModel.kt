@@ -2,12 +2,19 @@ package com.bsrakdg.blogpost.ui.main.blog.viewmodel
 
 import android.util.Log
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.BlogSearchEvent
+import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.RestoreBlogListFromCache
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
 
 fun BlogViewModel.resetPage() {
     val update = getCurrentViewStateOrNew()
     update.blogFields.page = 1
     setViewState(update)
+}
+
+fun BlogViewModel.refreshFromCache() {
+    setQueryInProgress(true)
+    setQueryExhausted(false)
+    setStateEvent(RestoreBlogListFromCache())
 }
 
 fun BlogViewModel.loadFirstPage() {

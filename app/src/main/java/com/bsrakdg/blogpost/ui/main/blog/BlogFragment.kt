@@ -57,10 +57,11 @@ class BlogFragment : BaseBlogFragment(),
 
         initRecyclerView()
         subscribeObservers()
+    }
 
-        if (savedInstanceState == null) {
-            onBlogSearchOrFilter()
-        }
+    override fun onResume() {
+        super.onResume()
+        viewModel.refreshFromCache()
     }
 
     private fun onBlogSearchOrFilter() {
@@ -91,6 +92,8 @@ class BlogFragment : BaseBlogFragment(),
                         dependencyProvider.getGlideRequestManager(),
                         viewState.blogFields.blogList
                     )
+
+                    Log.d(TAG, "#list items: ${viewState.blogFields.blogList.size}")
 
                     recyclerAdapter.submitList(
                         list = viewState.blogFields.blogList,

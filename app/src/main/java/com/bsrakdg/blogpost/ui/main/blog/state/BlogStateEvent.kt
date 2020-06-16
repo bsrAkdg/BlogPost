@@ -6,6 +6,9 @@ sealed class BlogStateEvent {
 
     class BlogSearchEvent : BlogStateEvent()
 
+    // for onSaveInstanceState
+    class RestoreBlogListFromCache : BlogStateEvent()
+
     class CheckAuthorOfBlogPostEvent : BlogStateEvent()
 
     class BlogDeleteEvent : BlogStateEvent()

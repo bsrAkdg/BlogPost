@@ -33,6 +33,13 @@ abstract class BaseBlogFragment : Fragment(), Injectable {
 
     override fun onSaveInstanceState(outState: Bundle) {
         if (isViewModelInitialized()) {
+
+            // You do not have to save large list into onSaveInstanceState,
+            // You should save to query and execute it for getting the list
+            val viewState = viewModel.viewState.value
+            viewState?.blogFields?.blogList = ArrayList()
+
+            // restore state after process death
             outState.putParcelable(
                 BLOG_VIEW_STATE_BUNDLE_KEY,
                 viewModel.viewState.value

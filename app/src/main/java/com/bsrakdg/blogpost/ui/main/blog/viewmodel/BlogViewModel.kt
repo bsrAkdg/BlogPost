@@ -98,6 +98,14 @@ constructor(
                 } ?: AbsentLiveData.create()
             }
 
+            is RestoreBlogListFromCache -> {
+                return blogRepository.restoreBlogListFromCache(
+                    query = getSearchQuery(),
+                    filterAndOrder = getOrder() + getFilter(),
+                    page = getPage()
+                )
+            }
+
             is None -> {
                 return object : LiveData<DataState<BlogViewState>>() {
                     override fun onActive() {
