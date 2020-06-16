@@ -64,6 +64,11 @@ class BlogFragment : BaseBlogFragment(),
         viewModel.refreshFromCache()
     }
 
+    override fun onPause() {
+        super.onPause()
+        saveLayoutManagerState()
+    }
+
     private fun onBlogSearchOrFilter() {
         viewModel.loadFirstPage().let { // completed loadFirstPage
             resetUI()
@@ -219,6 +224,19 @@ class BlogFragment : BaseBlogFragment(),
         findNavController().navigate(R.id.action_blogFragment_to_viewBlogFragment)
     }
 
+    override fun restoreListPosition() {
+        // update recyclerview layout manager with using view state when process death
+        // this is needed for auto scroll last position after process death
+        // Step 1. When process death : onPause -> saveLayoutManagerState (layout manager saved into view state)
+        // Step 2. Execute process death, then open app
+        // Step 3. Firstly receives data from cache, then sends new list to adapter, (submitList)
+        // when adapter execute submitlist, it handled restoreListPosition interface on adapter
+        // Step 4. Then this func update recyclerview layout manager with saved layout manager state
+        viewModel.viewState.value?.blogFields?.layoutManagerState?.let { lmState ->
+            blog_post_recyclerview?.layoutManager?.onRestoreInstanceState(lmState)
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_filter_settings -> {
@@ -306,6 +324,12 @@ class BlogFragment : BaseBlogFragment(),
             }
 
             dialog.show()
+        }
+    }
+
+    private fun saveLayoutManagerState() {
+        blog_post_recyclerview?.layoutManager?.onSaveInstanceState()?.let { lmState ->
+            viewModel.setLayoutManagerState(lmState)
         }
     }
 }

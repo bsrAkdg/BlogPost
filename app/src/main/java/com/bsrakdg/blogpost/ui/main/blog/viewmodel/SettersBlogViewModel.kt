@@ -1,7 +1,20 @@
 package com.bsrakdg.blogpost.ui.main.blog.viewmodel
 
 import android.net.Uri
+import android.os.Parcelable
 import com.bsrakdg.blogpost.models.BlogPost
+
+fun BlogViewModel.clearLayoutManagerState() {
+    val update = getCurrentViewStateOrNew()
+    update.blogFields.layoutManagerState = null
+    setViewState(update)
+}
+
+fun BlogViewModel.setLayoutManagerState(layoutManagerState: Parcelable) {
+    val update = getCurrentViewStateOrNew()
+    update.blogFields.layoutManagerState = layoutManagerState
+    setViewState(update)
+}
 
 fun BlogViewModel.onBlogPostUpdateSuccess(blogPost: BlogPost) {
     // update UpdateBlogFragment
