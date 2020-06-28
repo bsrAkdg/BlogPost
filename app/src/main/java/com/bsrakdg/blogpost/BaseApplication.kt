@@ -1,22 +1,25 @@
 package com.bsrakdg.blogpost
 
 import android.app.Application
-import com.bsrakdg.blogpost.di.AppInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
-import javax.inject.Inject
+import com.bsrakdg.blogpost.di.AppComponent
+import com.bsrakdg.blogpost.di.DaggerAppComponent
 
+class BaseApplication : Application() {
 
-class BaseApplication : Application(), HasAndroidInjector {
-
-    @Inject
-    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
+    lateinit var appComponent: AppComponent
 
     override fun onCreate() {
         super.onCreate()
-        AppInjector.init(this)
+        initAppComponent()
+
+        val mainComponent = appComponent.mainComponent().create()
+
+        val authComponent = appComponent.authComponent().create()
     }
 
-    override fun androidInjector() = dispatchingAndroidInjector
-
+    private fun initAppComponent() {
+        appComponent = DaggerAppComponent.builder()
+            .application(this)
+            .build()
+    }
 }

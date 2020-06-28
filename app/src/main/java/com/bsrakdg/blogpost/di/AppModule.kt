@@ -24,8 +24,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
-class AppModule {
+object AppModule {
 
+    @JvmStatic
     @Singleton
     @Provides
     fun provideSharedPreferences(
@@ -37,6 +38,7 @@ class AppModule {
         )
     }
 
+    @JvmStatic
     @Singleton
     @Provides
     fun provideSharedPrefEditor(
@@ -45,6 +47,7 @@ class AppModule {
         return sharedPreferences.edit()
     }
 
+    @JvmStatic
     @Singleton
     @Provides
     fun provideGsonBuilder(): Gson {
@@ -53,6 +56,7 @@ class AppModule {
             .create()
     }
 
+    @JvmStatic
     @Singleton
     @Provides
     fun provideRetrofitBuilder(
@@ -64,6 +68,7 @@ class AppModule {
             .addConverterFactory(GsonConverterFactory.create(gson))
     }
 
+    @JvmStatic
     @Singleton
     @Provides
     fun provideAppDp(
@@ -75,6 +80,7 @@ class AppModule {
             .build()
     }
 
+    @JvmStatic
     @Singleton
     @Provides
     fun provideAuthTokenDao(
@@ -83,6 +89,7 @@ class AppModule {
         return database.getAuthTokenDao()
     }
 
+    @JvmStatic
     @Singleton
     @Provides
     fun provideAccountPropertiesDao(
@@ -91,6 +98,7 @@ class AppModule {
         return database.getAccountPropertiesDao()
     }
 
+    @JvmStatic
     @Singleton
     @Provides
     fun provideRequestOptions(): RequestOptions {
@@ -98,6 +106,7 @@ class AppModule {
             .error(R.drawable.default_image)
     }
 
+    @JvmStatic
     @Singleton
     @Provides
     fun provideGlideInstance(

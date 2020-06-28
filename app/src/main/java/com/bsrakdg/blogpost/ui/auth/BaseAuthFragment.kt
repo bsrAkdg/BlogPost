@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bsrakdg.blogpost.di.Injectable
-import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
+import com.bsrakdg.blogpost.viewmodels.AuthViewModelFactory
 import javax.inject.Inject
 
 abstract class BaseAuthFragment : Fragment(), Injectable {
@@ -13,7 +13,7 @@ abstract class BaseAuthFragment : Fragment(), Injectable {
     val TAG: String = "BaseAuthFragment"
 
     @Inject
-    lateinit var providerFactory: ViewModelProviderFactory
+    lateinit var providerFactory: AuthViewModelFactory
 
     lateinit var viewModel: AuthViewModel
 

@@ -23,11 +23,10 @@ import com.bsrakdg.blogpost.ui.main.create_blog.BaseCreateBlogFragment
 import com.bsrakdg.blogpost.utils.BOTTOM_NAV_BACKSTACK_KEY
 import com.bsrakdg.blogpost.utils.BottomNavController
 import com.bsrakdg.blogpost.utils.setUpNavigation
-import com.bsrakdg.blogpost.viewmodels.ViewModelProviderFactory
+import com.bsrakdg.blogpost.viewmodels.AuthViewModelFactory
 import com.bumptech.glide.RequestManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 class MainActivity : BaseActivity(),
@@ -49,7 +48,7 @@ class MainActivity : BaseActivity(),
     }
 
     @Inject
-    lateinit var providerFactory: ViewModelProviderFactory
+    lateinit var providerFactory: AuthViewModelFactory
 
     @Inject
     lateinit var requestManager: RequestManager

@@ -1,8 +1,10 @@
 package com.bsrakdg.blogpost.di.auth
 
 import androidx.lifecycle.ViewModel
-import com.bsrakdg.blogpost.di.ViewModelKey
+import androidx.lifecycle.ViewModelProvider
+import com.bsrakdg.blogpost.di.auth.keys.AuthViewModelKey
 import com.bsrakdg.blogpost.ui.auth.AuthViewModel
+import com.bsrakdg.blogpost.viewmodels.AuthViewModelFactory
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -10,9 +12,14 @@ import dagger.multibindings.IntoMap
 @Module
 abstract class AuthViewModelModule {
 
+    @AuthScope
+    @Binds
+    abstract fun bindViewModelFactory(factory: AuthViewModelFactory): ViewModelProvider.Factory
+
+    @AuthScope
     @Binds
     @IntoMap
-    @ViewModelKey(AuthViewModel::class)
+    @AuthViewModelKey(AuthViewModel::class)
     abstract fun bindAuthViewModel(authViewModel: AuthViewModel): ViewModel
 
 }
