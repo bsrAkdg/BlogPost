@@ -4,6 +4,7 @@ import android.app.Application
 import com.bsrakdg.blogpost.di.AppComponent
 import com.bsrakdg.blogpost.di.DaggerAppComponent
 import com.bsrakdg.blogpost.di.auth.AuthComponent
+import com.bsrakdg.blogpost.di.main.MainComponent
 
 class BaseApplication : Application() {
 
@@ -11,13 +12,12 @@ class BaseApplication : Application() {
 
     private var authComponent: AuthComponent? = null
 
+    private var mainComponent: MainComponent? = null
+
+
     override fun onCreate() {
         super.onCreate()
         initAppComponent()
-
-        val mainComponent = appComponent.mainComponent().create()
-
-        val authComponent = appComponent.authComponent().create()
     }
 
     fun authComponent(): AuthComponent {
@@ -27,8 +27,19 @@ class BaseApplication : Application() {
         return authComponent as AuthComponent
     }
 
-    fun reşeaseAuthComponent() {
+    fun mainComponent(): MainComponent {
+        if (mainComponent == null) {
+            mainComponent = appComponent.mainComponent().create()
+        }
+        return mainComponent as MainComponent
+    }
+
+    fun releaseAuthComponent() {
         authComponent == null
+    }
+
+    fun releaseMainComponent() {
+        mainComponent == null
     }
 
     private fun initAppComponent() {

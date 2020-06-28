@@ -6,8 +6,10 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentFactory
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
+import com.bsrakdg.blogpost.BaseApplication
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.models.AUTH_TOKEN_BUNDLE_KEY
 import com.bsrakdg.blogpost.models.AuthToken
@@ -20,20 +22,30 @@ import com.bsrakdg.blogpost.ui.main.blog.BaseBlogFragment
 import com.bsrakdg.blogpost.ui.main.blog.UpdateBlogFragment
 import com.bsrakdg.blogpost.ui.main.blog.ViewBlogFragment
 import com.bsrakdg.blogpost.ui.main.create_blog.BaseCreateBlogFragment
-import com.bsrakdg.blogpost.utils.BOTTOM_NAV_BACKSTACK_KEY
+import com.bsrakdg.blogpost.utils.BOTTOM_NAV_BACK_STACK_KEY
 import com.bsrakdg.blogpost.utils.BottomNavController
 import com.bsrakdg.blogpost.utils.setUpNavigation
-import com.bsrakdg.blogpost.viewmodels.AuthViewModelFactory
-import com.bumptech.glide.RequestManager
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
+import javax.inject.Named
 
 class MainActivity : BaseActivity(),
-    BottomNavController.NavGraphProvider,
     BottomNavController.OnNavigationGraphChanged,
-    BottomNavController.OnNavigationReselectedListener,
-    MainDependencyProvider {
+    BottomNavController.OnNavigationReselectedListener {
+
+    @Inject
+    @Named("AccountFragmentFactory")
+    lateinit var accountFragmentFactory: FragmentFactory
+
+    @Inject
+    @Named("BlogFragmentFactory")
+    lateinit var blogFragmentFactory: FragmentFactory
+
+    @Inject
+    @Named("CreateBlogFragmentFactory")
+    lateinit var createBlogFragmentFactory: FragmentFactory
 
     private lateinit var bottomNavView: BottomNavigationView
 
@@ -42,25 +54,14 @@ class MainActivity : BaseActivity(),
             context = this,
             containerId = R.id.main_nav_host_fragment,
             appStartDestinationId = R.id.nav_blog,
-            graphChangeListener = this,
-            navGraphProvider = this
+            graphChangeListener = this
         )
     }
-
-    @Inject
-    lateinit var providerFactory: AuthViewModelFactory
-
-    @Inject
-    lateinit var requestManager: RequestManager
-
-    override fun getViewModelProviderFactory() = providerFactory
-
-    override fun getGlideRequestManager() = requestManager
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable(AUTH_TOKEN_BUNDLE_KEY, sessionManager.cachedToken.value)
         // save tab back stack for configuration change
-        outState.putIntArray(BOTTOM_NAV_BACKSTACK_KEY, bottomNavController.navigationBackStack.toIntArray())
+        outState.putIntArray(BOTTOM_NAV_BACK_STACK_KEY, bottomNavController.navigationBackStack.toIntArray())
         super.onSaveInstanceState(outState)
     }
 
@@ -81,12 +82,17 @@ class MainActivity : BaseActivity(),
             bottomNavController.setupBottomNavigationBackStack(null)
             bottomNavController.onNavigationItemSelected()
         } else {
-            (savedInstanceState[BOTTOM_NAV_BACKSTACK_KEY] as IntArray?)?.let { items ->
+            (savedInstanceState[BOTTOM_NAV_BACK_STACK_KEY] as IntArray?)?.let { items ->
                 val backStack = BottomNavController.BackStack()
                 backStack.addAll(items.toTypedArray())
                 bottomNavController.setupBottomNavigationBackStack(backStack)
             }
         }
+    }
+
+    override fun inject() {
+        (application as BaseApplication).mainComponent()
+            .inject(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,8 +109,8 @@ class MainActivity : BaseActivity(),
         setSupportActionBar(tool_bar)
     }
 
-    override fun displayProgressBar(bool: Boolean) {
-        if (bool) {
+    override fun displayProgressBar(boolean: Boolean) {
+        if (boolean) {
             progress_bar.visibility = View.VISIBLE
         } else {
             progress_bar.visibility = View.GONE
@@ -125,21 +131,7 @@ class MainActivity : BaseActivity(),
         val intent = Intent(this, AuthActivity::class.java)
         startActivity(intent)
         finish()
-    }
-
-    override fun getNavGraphId(itemId: Int): Int = when (itemId) {
-        R.id.nav_blog -> {
-            R.navigation.nav_blog
-        }
-        R.id.nav_account -> {
-            R.navigation.nav_account
-        }
-        R.id.nav_create_blog -> {
-            R.navigation.nav_create_blog
-        }
-        else -> {
-            R.navigation.nav_blog
-        }
+        (application as BaseApplication).releaseMainComponent()
     }
 
     override fun onGraphChange() {

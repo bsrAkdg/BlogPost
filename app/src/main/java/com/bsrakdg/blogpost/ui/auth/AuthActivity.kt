@@ -138,6 +138,6 @@ class AuthActivity : BaseActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
-        (application as BaseApplication).reşeaseAuthComponent()
+        (application as BaseApplication).releaseAuthComponent()
     }
 }

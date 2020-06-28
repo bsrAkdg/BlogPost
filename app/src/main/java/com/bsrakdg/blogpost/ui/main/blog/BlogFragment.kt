@@ -4,7 +4,10 @@ import android.app.SearchManager
 import android.content.Context.SEARCH_SERVICE
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.RadioButton
@@ -12,7 +15,9 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,18 +26,28 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
 import com.bsrakdg.blogpost.R
+import com.bsrakdg.blogpost.di.main.MainScope
 import com.bsrakdg.blogpost.models.BlogPost
 import com.bsrakdg.blogpost.persistence.BlogQueryUtils.Companion.BLOG_FILTER_DATE_UPDATED
 import com.bsrakdg.blogpost.persistence.BlogQueryUtils.Companion.BLOG_FILTER_USERNAME
 import com.bsrakdg.blogpost.persistence.BlogQueryUtils.Companion.BLOG_ORDER_ASC
 import com.bsrakdg.blogpost.ui.DataState
+import com.bsrakdg.blogpost.ui.main.blog.state.BLOG_VIEW_STATE_BUNDLE_KEY
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
 import com.bsrakdg.blogpost.ui.main.blog.viewmodel.*
 import com.bsrakdg.blogpost.utils.ErrorHandling
 import com.bsrakdg.blogpost.utils.TopSpacingItemDecoration
+import com.bumptech.glide.RequestManager
 import kotlinx.android.synthetic.main.fragment_blog.*
+import javax.inject.Inject
 
-class BlogFragment : BaseBlogFragment(),
+@MainScope
+class BlogFragment
+@Inject
+constructor(
+    private val viewModelFactory: ViewModelProvider.Factory,
+    private val requestManager: RequestManager
+) : BaseBlogFragment(R.layout.fragment_blog),
     BlogListAdapter.Interaction,
     SwipeRefreshLayout.OnRefreshListener {
 
@@ -40,12 +55,39 @@ class BlogFragment : BaseBlogFragment(),
 
     private lateinit var searchView: SearchView
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_blog, container, false)
+    val viewModel : BlogViewModel by viewModels {
+        viewModelFactory
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        // You do not have to save large list into onSaveInstanceState,
+        // You should save to query and execute it for getting the list
+        val viewState = viewModel.viewState.value
+        viewState?.blogFields?.blogList = ArrayList()
+
+        // restore state after process death
+        outState.putParcelable(
+            BLOG_VIEW_STATE_BUNDLE_KEY,
+            viewModel.viewState.value
+        )
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        cancelActiveJobs()
+
+        //restore state after process death
+        savedInstanceState?.let { inState ->
+            (inState[BLOG_VIEW_STATE_BUNDLE_KEY] as BlogViewState?)?.let { blogViewState ->
+                viewModel.setViewState(blogViewState)
+            }
+
+        }
+    }
+
+    override fun cancelActiveJobs() {
+        viewModel.cancelActiveJobs()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -94,7 +136,7 @@ class BlogFragment : BaseBlogFragment(),
             if (viewState != null) {
                 recyclerAdapter.apply {
                     preLoadGlideImages(
-                        dependencyProvider.getGlideRequestManager(),
+                        requestManager,
                         viewState.blogFields.blogList
                     )
 
@@ -190,7 +232,7 @@ class BlogFragment : BaseBlogFragment(),
             // create adapter
             recyclerAdapter = BlogListAdapter(
                 interaction = this@BlogFragment,
-                requestManager = dependencyProvider.getGlideRequestManager()
+                requestManager = requestManager
             )
 
             // add scroll listener for pagination
