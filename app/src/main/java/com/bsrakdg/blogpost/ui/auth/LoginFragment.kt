@@ -1,28 +1,36 @@
 package com.bsrakdg.blogpost.ui.auth
 
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.bsrakdg.blogpost.R
+import com.bsrakdg.blogpost.di.auth.AuthScope
 import com.bsrakdg.blogpost.ui.auth.state.AuthStateEvent.LoginAttemptEvent
 import com.bsrakdg.blogpost.ui.auth.state.LoginFields
 import kotlinx.android.synthetic.main.fragment_login.*
+import javax.inject.Inject
 
-class LoginFragment : BaseAuthFragment() {
+@AuthScope
+class LoginFragment
+@Inject
+constructor(
+    private val viewModelFactory: ViewModelProvider.Factory
+) : Fragment(R.layout.fragment_login) {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_login, container, false)
+    val viewModel: AuthViewModel by viewModels { // new way initialize viewModel
+        viewModelFactory
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.cancelActiveJobs()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "LoginFragment : ${viewModel.hashCode()}")
 
         subscribeObserver()
 

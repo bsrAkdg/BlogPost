@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import com.bsrakdg.blogpost.api.auth.BlogPostAuthService
 import com.bsrakdg.blogpost.api.auth.network_responses.LoginResponse
 import com.bsrakdg.blogpost.api.auth.network_responses.RegistrationResponse
+import com.bsrakdg.blogpost.di.auth.AuthScope
 import com.bsrakdg.blogpost.models.AccountProperties
 import com.bsrakdg.blogpost.models.AuthToken
 import com.bsrakdg.blogpost.persistence.AccountPropertiesDao
@@ -29,6 +30,7 @@ import com.bsrakdg.blogpost.utils.SuccessHandling.Companion.RESPONSE_CHECK_PREVI
 import kotlinx.coroutines.Job
 import javax.inject.Inject
 
+@AuthScope
 class AuthRepository
 @Inject // AuthModule.class : provideAuthRepository
 constructor(

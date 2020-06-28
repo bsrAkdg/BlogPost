@@ -6,7 +6,8 @@ import dagger.Subcomponent
 @Subcomponent(
     modules = [
         AuthModule::class,
-        AuthViewModelModule::class
+        AuthViewModelModule::class,
+        AuthFragmentsModule::class
     ]
 )
 interface AuthComponent {

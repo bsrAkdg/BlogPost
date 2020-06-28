@@ -1,27 +1,34 @@
 package com.bsrakdg.blogpost.ui.auth
 
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bsrakdg.blogpost.R
+import com.bsrakdg.blogpost.di.auth.AuthScope
 import kotlinx.android.synthetic.main.fragment_launcher.*
+import javax.inject.Inject
 
-class LauncherFragment : BaseAuthFragment() {
+@AuthScope
+class LauncherFragment
+@Inject
+constructor(
+    private val viewModelFactory: ViewModelProvider.Factory
+) : Fragment(R.layout.fragment_launcher) {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_launcher, container, false)
+    val viewModel: AuthViewModel by viewModels { // new way initialize viewModel
+        viewModelFactory
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.cancelActiveJobs()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "LauncherFragment : ${viewModel.hashCode()}")
 
         register.setOnClickListener {
             navRegistration()

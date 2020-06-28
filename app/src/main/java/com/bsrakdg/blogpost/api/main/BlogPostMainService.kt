@@ -4,12 +4,14 @@ import androidx.lifecycle.LiveData
 import com.bsrakdg.blogpost.api.GenericResponse
 import com.bsrakdg.blogpost.api.main.network_responses.BlogCreateUpdateResponse
 import com.bsrakdg.blogpost.api.main.network_responses.BlogListSearchResponse
+import com.bsrakdg.blogpost.di.main.MainScope
 import com.bsrakdg.blogpost.models.AccountProperties
 import com.bsrakdg.blogpost.utils.GenericApiResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.*
 
+@MainScope
 interface BlogPostMainService {
 
     @GET("account/properties")

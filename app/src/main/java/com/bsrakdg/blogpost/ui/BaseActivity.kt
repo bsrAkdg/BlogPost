@@ -3,20 +3,21 @@ package com.bsrakdg.blogpost.ui
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bsrakdg.blogpost.session.SessionManager
 import com.bsrakdg.blogpost.ui.UIMessageType.*
 import com.bsrakdg.blogpost.utils.Constants.Companion.PERMISSIONS_REQUEST_READ_STORAGE
-import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-abstract class BaseActivity : DaggerAppCompatActivity(),
+abstract class BaseActivity : AppCompatActivity(),
     DataStateChangeListener,
     UICommunicationListener {
 
@@ -24,6 +25,13 @@ abstract class BaseActivity : DaggerAppCompatActivity(),
 
     @Inject
     lateinit var sessionManager: SessionManager
+
+    abstract fun inject()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        inject()
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onUIMessageReceived(uiMessage: UIMessage) {
         when (uiMessage.uiMessageType) {

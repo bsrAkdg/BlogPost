@@ -4,15 +4,17 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.TranslateAnimation
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bsrakdg.blogpost.R
+import com.bsrakdg.blogpost.di.auth.AuthScope
 import com.bsrakdg.blogpost.ui.DataState
 import com.bsrakdg.blogpost.ui.DataStateChangeListener
 import com.bsrakdg.blogpost.ui.Response
@@ -22,8 +24,25 @@ import kotlinx.android.synthetic.main.fragment_forgot_password.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ForgotPasswordFragment : BaseAuthFragment() {
+@AuthScope
+class ForgotPasswordFragment
+@Inject
+constructor(
+    private val viewModelFactory: ViewModelProvider.Factory
+) : Fragment(R.layout.fragment_forgot_password) {
+
+    private val TAG = "ForgotPasswordFragment";
+
+    val viewModel: AuthViewModel by viewModels { // new way initialize viewModel
+        viewModelFactory
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.cancelActiveJobs()
+    }
 
     lateinit var webView: WebView
     lateinit var stateChangeListener: DataStateChangeListener
@@ -80,16 +99,8 @@ class ForgotPasswordFragment : BaseAuthFragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_forgot_password, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "ForgotPasswordFragment : ${viewModel.hashCode()}")
 
         webView = view.findViewById(R.id.webview)
 
