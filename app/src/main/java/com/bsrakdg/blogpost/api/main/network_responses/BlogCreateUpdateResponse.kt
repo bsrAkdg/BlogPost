@@ -1,5 +1,7 @@
 package com.bsrakdg.blogpost.api.main.network_responses
 
+import com.bsrakdg.blogpost.models.BlogPost
+import com.bsrakdg.blogpost.utils.DateConvertUtils
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
@@ -36,4 +38,20 @@ class BlogCreateUpdateResponse(
     @SerializedName("username")
     @Expose
     var username: String
-)
+
+
+) {
+    fun toBlogPost(): BlogPost {
+        return BlogPost(
+            pk = pk,
+            title = title,
+            slug = slug,
+            body = body,
+            image = image,
+            date_updated = DateConvertUtils.convertServerStringDateToLong(
+                date_updated
+            ),
+            username = username
+        )
+    }
+}

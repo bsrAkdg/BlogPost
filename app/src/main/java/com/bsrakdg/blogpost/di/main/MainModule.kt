@@ -4,14 +4,14 @@ import com.bsrakdg.blogpost.api.main.BlogPostMainService
 import com.bsrakdg.blogpost.persistence.AccountPropertiesDao
 import com.bsrakdg.blogpost.persistence.AppDatabase
 import com.bsrakdg.blogpost.persistence.BlogPostDao
-import com.bsrakdg.blogpost.repository.main.AccountRepository
-import com.bsrakdg.blogpost.repository.main.BlogRepository
-import com.bsrakdg.blogpost.repository.main.CreateBlogRepository
+import com.bsrakdg.blogpost.repository.main.*
 import com.bsrakdg.blogpost.session.SessionManager
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.FlowPreview
 import retrofit2.Retrofit
 
+@FlowPreview
 @Module
 object MainModule {
 
@@ -32,7 +32,7 @@ object MainModule {
         accountPropertiesDao: AccountPropertiesDao,
         sessionManager: SessionManager
     ): AccountRepository {
-        return AccountRepository(
+        return AccountRepositoryImpl(
             blogPostMainService = blogPostMainService,
             accountPropertiesDao = accountPropertiesDao,
             sessionManager = sessionManager
@@ -54,7 +54,7 @@ object MainModule {
         blogPostDao: BlogPostDao,
         sessionManager: SessionManager
     ): BlogRepository {
-        return BlogRepository(
+        return BlogRepositoryImpl(
             blogPostMainService = blogPostMainService,
             blogPostDao = blogPostDao,
             sessionManager = sessionManager
@@ -69,7 +69,7 @@ object MainModule {
         blogPostDao: BlogPostDao,
         sessionManager: SessionManager
     ): CreateBlogRepository {
-        return CreateBlogRepository(
+        return CreateBlogRepositoryImpl(
             blogPostMainService = blogPostMainService,
             blogPostDao = blogPostDao,
             sessionManager = sessionManager

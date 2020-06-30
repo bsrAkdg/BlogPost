@@ -2,7 +2,7 @@ package com.bsrakdg.blogpost.ui.main.create_blog.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
-import com.bsrakdg.blogpost.repository.main.CreateBlogRepository
+import com.bsrakdg.blogpost.repository.main.CreateBlogRepositoryImpl
 import com.bsrakdg.blogpost.session.SessionManager
 import com.bsrakdg.blogpost.ui.BaseViewModel
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogStateEvent
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class CreateBlogViewModel
 @Inject
 constructor(
-    val createBlogRepository: CreateBlogRepository,
+    val createBlogRepository: CreateBlogRepositoryImpl,
     val sessionManager: SessionManager
 ) : BaseViewModel<CreateBlogStateEvent, CreateBlogViewState>() {
 

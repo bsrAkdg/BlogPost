@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import com.bsrakdg.blogpost.api.auth.BlogPostAuthService
 import com.bsrakdg.blogpost.persistence.AccountPropertiesDao
 import com.bsrakdg.blogpost.persistence.AuthTokenDao
+import com.bsrakdg.blogpost.repository.auth.AuthRepository
 import com.bsrakdg.blogpost.repository.auth.AuthRepositoryImpl
 import com.bsrakdg.blogpost.session.SessionManager
 import dagger.Module
@@ -34,7 +35,7 @@ object AuthModule {
         blogPostAuthService: BlogPostAuthService,
         sharedPreferences: SharedPreferences,
         editor: SharedPreferences.Editor
-    ): AuthRepositoryImpl {
+    ): AuthRepository {
         return AuthRepositoryImpl(
             authTokenDao,
             accountPropertiesDao,
