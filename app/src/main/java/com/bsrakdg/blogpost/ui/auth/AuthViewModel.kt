@@ -1,66 +1,86 @@
 package com.bsrakdg.blogpost.ui.auth
 
-import androidx.lifecycle.LiveData
+import com.bsrakdg.blogpost.di.auth.AuthScope
 import com.bsrakdg.blogpost.models.AuthToken
-import com.bsrakdg.blogpost.repository.auth.AuthRepositoryImpl
+import com.bsrakdg.blogpost.repository.auth.AuthRepository
 import com.bsrakdg.blogpost.ui.BaseViewModel
-import com.bsrakdg.blogpost.ui.auth.state.AuthStateEvent
 import com.bsrakdg.blogpost.ui.auth.state.AuthStateEvent.*
 import com.bsrakdg.blogpost.ui.auth.state.AuthViewState
 import com.bsrakdg.blogpost.ui.auth.state.LoginFields
 import com.bsrakdg.blogpost.ui.auth.state.RegistrationFields
-import com.bsrakdg.blogpost.utils.DataState
+import com.bsrakdg.blogpost.utils.*
+import com.bsrakdg.blogpost.utils.ErrorHandling.Companion.INVALID_STATE_EVENT
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
+@FlowPreview
+@AuthScope
 class AuthViewModel
 @Inject
 constructor(
-    private val authRepository: AuthRepositoryImpl
-) : BaseViewModel<AuthStateEvent, AuthViewState>() {
+    private val authRepository: AuthRepository
+) : BaseViewModel<AuthViewState>() {
+
+    override fun handleNewData(data: AuthViewState) {
+        data.authToken?.let { authToken ->
+            setAuthToken(authToken)
+        }
+    }
+
+    override fun setStateEvent(stateEvent: StateEvent) {
+
+        val job: Flow<DataState<AuthViewState>> = when (stateEvent) {
+
+            is LoginAttemptEvent -> {
+                authRepository.attemptLogin(
+                    stateEvent = stateEvent,
+                    email = stateEvent.email,
+                    password = stateEvent.password
+                )
+            }
+
+            is RegisterAttemptEvent -> {
+                authRepository.attemptRegistration(
+                    stateEvent = stateEvent,
+                    email = stateEvent.email,
+                    username = stateEvent.username,
+                    password = stateEvent.password,
+                    confirmPassword = stateEvent.confirm_password
+                )
+            }
+
+            is CheckPreviousAuthEvent -> {
+                authRepository.checkPreviousAuthUser(stateEvent)
+            }
+
+            else -> {
+                flow {
+                    emit(
+                        DataState.error(
+                            response = Response(
+                                message = INVALID_STATE_EVENT,
+                                uiComponentType = UIComponentType.None(),
+                                messageType = MessageType.Error()
+                            ),
+                            stateEvent = stateEvent
+                        )
+                    )
+                }
+            }
+        }
+        launchJob(stateEvent, job)
+    }
 
     override fun initNewViewState(): AuthViewState {
         return AuthViewState()
     }
 
-    override fun handleStateEvent(stateEvent: AuthStateEvent): LiveData<DataState<AuthViewState>> {
-        // if fragment change event from view model, base view model handle
-        when (stateEvent) {
-            is LoginAttemptEvent -> {
-                return authRepository.attemptLogin(
-                    stateEvent.email,
-                    stateEvent.password
-                )
-            }
-            is RegisterAttemptEvent -> {
-                return authRepository.attemptRegister(
-                    stateEvent.email,
-                    stateEvent.username,
-                    stateEvent.password,
-                    stateEvent.confirm_password
-                )
-            }
-            is CheckPreviousAuthEvent -> {
-                return authRepository.checkPreviousAuthUser()
-            }
-            is None -> {
-                // for clear progress bar
-                return object : LiveData<DataState<AuthViewState>>() {
-                    override fun onActive() {
-                        super.onActive()
-                        value = DataState.data(
-                            data = null,
-                            response = null
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    // this method triggers by register button onclick on RegisterFragment
     fun setRegistrationFields(registrationFields: RegistrationFields) {
         val update = getCurrentViewStateOrNew()
-        // do not continue if it has already been triggered
         if (update.registrationFields == registrationFields) {
             return
         }
@@ -68,10 +88,8 @@ constructor(
         setViewState(update)
     }
 
-    // this method triggers by login button onclick on LoginFragment
     fun setLoginFields(loginFields: LoginFields) {
         val update = getCurrentViewStateOrNew()
-        // do not continue if it has already been triggered
         if (update.loginFields == loginFields) {
             return
         }
@@ -88,17 +106,10 @@ constructor(
         setViewState(update)
     }
 
-    fun cancelActiveJobs() {
-        handlePendingData()
-        authRepository.cancelActiveJobs()
-    }
-
-    private fun handlePendingData() {
-        setStateEvent(None())
-    }
-
     override fun onCleared() {
         super.onCleared()
         cancelActiveJobs()
     }
+
+
 }

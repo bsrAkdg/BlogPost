@@ -5,15 +5,15 @@ import okhttp3.MultipartBody
 
 sealed class BlogStateEvent: StateEvent {
 
-    class BlogSearchEvent : BlogStateEvent() {
+    class BlogSearchEvent(
+        val clearLayoutManagerState: Boolean = true
+    ) : BlogStateEvent() {
         override fun errorInfo(): String {
             return "Error searching for blog posts."
         }
-    }
 
-    class RestoreBlogListFromCache: BlogStateEvent() {
-        override fun errorInfo(): String {
-            return "Unable to restore blog posts from cache."
+        override fun toString(): String {
+            return "BlogSearchEvent"
         }
     }
 
@@ -21,11 +21,20 @@ sealed class BlogStateEvent: StateEvent {
         override fun errorInfo(): String {
             return "Error checking if you are the author of this blog post."
         }
+
+        override fun toString(): String {
+            return "CheckAuthorOfBlogPost"
+        }
+
     }
 
     class DeleteBlogPostEvent: BlogStateEvent() {
         override fun errorInfo(): String {
             return "Error deleting that blog post."
+        }
+
+        override fun toString(): String {
+            return "DeleteBlogPostEvent"
         }
     }
 
@@ -37,6 +46,11 @@ sealed class BlogStateEvent: StateEvent {
         override fun errorInfo(): String {
             return "Error updating that blog post."
         }
+
+        override fun toString(): String {
+            return "UpdateBlogPostEvent"
+        }
+
     }
 
     class None: BlogStateEvent() {

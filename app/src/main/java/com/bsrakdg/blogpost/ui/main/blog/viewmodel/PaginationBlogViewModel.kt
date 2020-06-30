@@ -2,50 +2,64 @@ package com.bsrakdg.blogpost.ui.main.blog.viewmodel
 
 import android.util.Log
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.BlogSearchEvent
-import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.RestoreBlogListFromCache
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 
+
+@FlowPreview
+@ExperimentalCoroutinesApi
 fun BlogViewModel.resetPage() {
     val update = getCurrentViewStateOrNew()
     update.blogFields.page = 1
     setViewState(update)
 }
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 fun BlogViewModel.refreshFromCache() {
-    setQueryInProgress(true)
-    setQueryExhausted(false)
-    setStateEvent(RestoreBlogListFromCache())
+    if (!isJobAlreadyActive(BlogSearchEvent())) {
+        setQueryExhausted(false)
+        setStateEvent(BlogSearchEvent(false))
+    }
 }
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 fun BlogViewModel.loadFirstPage() {
-    setQueryInProgress(true)
-    setQueryExhausted(false)
-    resetPage()
-    setStateEvent(BlogSearchEvent())
+    if (!isJobAlreadyActive(BlogSearchEvent())) {
+        setQueryExhausted(false)
+        resetPage()
+        setStateEvent(BlogSearchEvent())
+        Log.e(TAG, "BlogViewModel: loadFirstPage: ${viewState.value!!.blogFields.searchQuery}")
+    }
 }
 
-fun BlogViewModel.incrementPageNumber() {
+@FlowPreview
+@ExperimentalCoroutinesApi
+private fun BlogViewModel.incrementPageNumber() {
     val update = getCurrentViewStateOrNew()
-    val page =
-        update.copy().blogFields.page // we do not want reference (use copy)
-    update.blogFields.page = page + 1
+    val page = update.copy().blogFields.page ?: 1
+    update.blogFields.page = page.plus(1)
     setViewState(update)
 }
 
-fun BlogViewModel.nextPageNumber() {
-    if (!getIsQueryExhausted()
-        && !getIsQueryInProgress()
+@FlowPreview
+@ExperimentalCoroutinesApi
+fun BlogViewModel.nextPage() {
+    if (!isJobAlreadyActive(BlogSearchEvent())
+        && !viewState.value!!.blogFields.isQueryExhausted!!
     ) {
-
-        Log.d(TAG, "BlogViewModel : attempting to load next page")
+        Log.d(TAG, "BlogViewModel: Attempting to load next page...")
         incrementPageNumber()
-        setQueryInProgress(true)
         setStateEvent(BlogSearchEvent())
     }
 }
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 fun BlogViewModel.handleIncomingBlogListData(viewState: BlogViewState) {
-    setQueryExhausted(viewState.blogFields.isQueryExhausted)
-    setQueryInProgress(viewState.blogFields.isQueryInProgress)
-    setBlogListData(viewState.blogFields.blogList)
+    viewState.blogFields.let { blogFields ->
+        blogFields.blogList?.let { setBlogListData(it) }
+    }
 }
