@@ -4,12 +4,12 @@ import androidx.lifecycle.LiveData
 import com.bsrakdg.blogpost.models.AuthToken
 import com.bsrakdg.blogpost.repository.auth.AuthRepository
 import com.bsrakdg.blogpost.ui.BaseViewModel
-import com.bsrakdg.blogpost.ui.DataState
 import com.bsrakdg.blogpost.ui.auth.state.AuthStateEvent
 import com.bsrakdg.blogpost.ui.auth.state.AuthStateEvent.*
 import com.bsrakdg.blogpost.ui.auth.state.AuthViewState
 import com.bsrakdg.blogpost.ui.auth.state.LoginFields
 import com.bsrakdg.blogpost.ui.auth.state.RegistrationFields
+import com.bsrakdg.blogpost.utils.DataState
 import javax.inject.Inject
 
 class AuthViewModel

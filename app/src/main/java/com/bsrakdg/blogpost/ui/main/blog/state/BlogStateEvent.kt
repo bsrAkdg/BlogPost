@@ -1,23 +1,47 @@
 package com.bsrakdg.blogpost.ui.main.blog.state
 
+import com.bsrakdg.blogpost.utils.StateEvent
 import okhttp3.MultipartBody
 
-sealed class BlogStateEvent {
+sealed class BlogStateEvent: StateEvent {
 
-    class BlogSearchEvent : BlogStateEvent()
+    class BlogSearchEvent : BlogStateEvent() {
+        override fun errorInfo(): String {
+            return "Error searching for blog posts."
+        }
+    }
 
-    // for onSaveInstanceState
-    class RestoreBlogListFromCache : BlogStateEvent()
+    class RestoreBlogListFromCache: BlogStateEvent() {
+        override fun errorInfo(): String {
+            return "Unable to restore blog posts from cache."
+        }
+    }
 
-    class CheckAuthorOfBlogPostEvent : BlogStateEvent()
+    class CheckAuthorOfBlogPost: BlogStateEvent() {
+        override fun errorInfo(): String {
+            return "Error checking if you are the author of this blog post."
+        }
+    }
 
-    class BlogDeleteEvent : BlogStateEvent()
+    class DeleteBlogPostEvent: BlogStateEvent() {
+        override fun errorInfo(): String {
+            return "Error deleting that blog post."
+        }
+    }
 
-    data class UpdatedBlogPostEvent(
-        var title: String,
-        var body: String,
+    data class UpdateBlogPostEvent(
+        val title: String,
+        val body: String,
         val image: MultipartBody.Part?
-    ) : BlogStateEvent()
+    ): BlogStateEvent() {
+        override fun errorInfo(): String {
+            return "Error updating that blog post."
+        }
+    }
 
-    class None : BlogStateEvent()
+    class None: BlogStateEvent() {
+        override fun errorInfo(): String {
+            return "None."
+        }
+    }
 }

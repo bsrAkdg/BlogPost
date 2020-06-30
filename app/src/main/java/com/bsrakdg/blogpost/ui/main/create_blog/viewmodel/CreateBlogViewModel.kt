@@ -5,12 +5,12 @@ import androidx.lifecycle.liveData
 import com.bsrakdg.blogpost.repository.main.CreateBlogRepository
 import com.bsrakdg.blogpost.session.SessionManager
 import com.bsrakdg.blogpost.ui.BaseViewModel
-import com.bsrakdg.blogpost.ui.DataState
-import com.bsrakdg.blogpost.ui.Loading
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogStateEvent
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogStateEvent.CreateNewBlogEvent
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogStateEvent.None
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogViewState
+import com.bsrakdg.blogpost.utils.DataState
+import com.bsrakdg.blogpost.utils.Loading
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -56,7 +56,9 @@ constructor(
                     emit(
                         DataState(
                             error = null,
-                            loading = Loading(isLoading = false),
+                            loading = Loading(
+                                isLoading = false
+                            ),
                             data = null
                         )
                     )

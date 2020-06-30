@@ -15,11 +15,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.di.auth.AuthScope
-import com.bsrakdg.blogpost.ui.DataState
 import com.bsrakdg.blogpost.ui.DataStateChangeListener
-import com.bsrakdg.blogpost.ui.Response
-import com.bsrakdg.blogpost.ui.ResponseType
 import com.bsrakdg.blogpost.utils.Constants
+import com.bsrakdg.blogpost.utils.DataState
+import com.bsrakdg.blogpost.utils.Response
+import com.bsrakdg.blogpost.utils.ResponseType
 import kotlinx.android.synthetic.main.fragment_forgot_password.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope

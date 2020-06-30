@@ -31,10 +31,10 @@ import com.bsrakdg.blogpost.models.BlogPost
 import com.bsrakdg.blogpost.persistence.BlogQueryUtils.Companion.BLOG_FILTER_DATE_UPDATED
 import com.bsrakdg.blogpost.persistence.BlogQueryUtils.Companion.BLOG_FILTER_USERNAME
 import com.bsrakdg.blogpost.persistence.BlogQueryUtils.Companion.BLOG_ORDER_ASC
-import com.bsrakdg.blogpost.ui.DataState
 import com.bsrakdg.blogpost.ui.main.blog.state.BLOG_VIEW_STATE_BUNDLE_KEY
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
 import com.bsrakdg.blogpost.ui.main.blog.viewmodel.*
+import com.bsrakdg.blogpost.utils.DataState
 import com.bsrakdg.blogpost.utils.ErrorHandling
 import com.bsrakdg.blogpost.utils.TopSpacingItemDecoration
 import com.bumptech.glide.RequestManager

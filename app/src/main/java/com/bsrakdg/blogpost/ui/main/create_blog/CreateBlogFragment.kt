@@ -14,7 +14,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bsrakdg.blogpost.R
-import com.bsrakdg.blogpost.ui.*
+import com.bsrakdg.blogpost.ui.AreYouSureCallback
+import com.bsrakdg.blogpost.ui.UIMessage
+import com.bsrakdg.blogpost.ui.UIMessageType
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CREATE_BLOG_VIEW_STATE_BUNDLE_KEY
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogStateEvent.CreateNewBlogEvent
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogViewState
@@ -23,8 +25,10 @@ import com.bsrakdg.blogpost.ui.main.create_blog.viewmodel.clearNewBlogFields
 import com.bsrakdg.blogpost.ui.main.create_blog.viewmodel.getNewImageUri
 import com.bsrakdg.blogpost.ui.main.create_blog.viewmodel.setNewBlogFields
 import com.bsrakdg.blogpost.utils.Constants.Companion.GALLERY_REQUEST_CODE
+import com.bsrakdg.blogpost.utils.DataState
 import com.bsrakdg.blogpost.utils.ErrorHandling.Companion.ERROR_MUST_SELECT_IMAGE
 import com.bsrakdg.blogpost.utils.ErrorHandling.Companion.ERROR_SOMETHING_WRONG_WITH_IMAGE
+import com.bsrakdg.blogpost.utils.Response
 import com.bsrakdg.blogpost.utils.SuccessHandling
 import com.bumptech.glide.RequestManager
 import com.theartofdev.edmodo.cropper.CropImage

@@ -10,13 +10,13 @@ import com.bsrakdg.blogpost.persistence.BlogPostDao
 import com.bsrakdg.blogpost.repository.JobManager
 import com.bsrakdg.blogpost.repository.NetworkBoundResource
 import com.bsrakdg.blogpost.session.SessionManager
-import com.bsrakdg.blogpost.ui.DataState
-import com.bsrakdg.blogpost.ui.Response
-import com.bsrakdg.blogpost.ui.ResponseType
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogViewState
 import com.bsrakdg.blogpost.utils.ApiSuccessResponse
+import com.bsrakdg.blogpost.utils.DataState
 import com.bsrakdg.blogpost.utils.DateConvertUtils
 import com.bsrakdg.blogpost.utils.GenericApiResponse
+import com.bsrakdg.blogpost.utils.Response
+import com.bsrakdg.blogpost.utils.ResponseType
 import com.bsrakdg.blogpost.utils.SuccessHandling.Companion.RESPONSE_MUST_BECOME_CODINGWITHMITCH_MEMBER
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job

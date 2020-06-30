@@ -10,12 +10,12 @@ import com.bsrakdg.blogpost.persistence.AccountPropertiesDao
 import com.bsrakdg.blogpost.repository.JobManager
 import com.bsrakdg.blogpost.repository.NetworkBoundResource
 import com.bsrakdg.blogpost.session.SessionManager
-import com.bsrakdg.blogpost.ui.DataState
-import com.bsrakdg.blogpost.ui.Response
-import com.bsrakdg.blogpost.ui.ResponseType
 import com.bsrakdg.blogpost.ui.main.account.state.AccountViewState
 import com.bsrakdg.blogpost.utils.ApiSuccessResponse
+import com.bsrakdg.blogpost.utils.DataState
 import com.bsrakdg.blogpost.utils.GenericApiResponse
+import com.bsrakdg.blogpost.utils.Response
+import com.bsrakdg.blogpost.utils.ResponseType
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext

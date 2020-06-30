@@ -6,11 +6,11 @@ import com.bsrakdg.blogpost.persistence.BlogQueryUtils
 import com.bsrakdg.blogpost.repository.main.BlogRepository
 import com.bsrakdg.blogpost.session.SessionManager
 import com.bsrakdg.blogpost.ui.BaseViewModel
-import com.bsrakdg.blogpost.ui.DataState
-import com.bsrakdg.blogpost.ui.Loading
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.*
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
+import com.bsrakdg.blogpost.utils.DataState
+import com.bsrakdg.blogpost.utils.Loading
 import com.bsrakdg.blogpost.utils.PreferenceKeys.Companion.BLOG_FILTER
 import com.bsrakdg.blogpost.utils.PreferenceKeys.Companion.BLOG_ORDER
 import okhttp3.MediaType

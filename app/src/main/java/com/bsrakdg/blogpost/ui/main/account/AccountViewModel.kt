@@ -5,11 +5,11 @@ import com.bsrakdg.blogpost.models.AccountProperties
 import com.bsrakdg.blogpost.repository.main.AccountRepository
 import com.bsrakdg.blogpost.session.SessionManager
 import com.bsrakdg.blogpost.ui.BaseViewModel
-import com.bsrakdg.blogpost.ui.DataState
-import com.bsrakdg.blogpost.ui.Loading
 import com.bsrakdg.blogpost.ui.main.account.state.AccountStateEvent
 import com.bsrakdg.blogpost.ui.main.account.state.AccountStateEvent.*
 import com.bsrakdg.blogpost.ui.main.account.state.AccountViewState
+import com.bsrakdg.blogpost.utils.DataState
+import com.bsrakdg.blogpost.utils.Loading
 import javax.inject.Inject
 
 class AccountViewModel

@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.di.main.MainScope
-import com.bsrakdg.blogpost.ui.*
 import com.bsrakdg.blogpost.ui.main.blog.state.BLOG_VIEW_STATE_BUNDLE_KEY
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.UpdatedBlogPostEvent
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
@@ -25,8 +24,10 @@ import com.bsrakdg.blogpost.ui.main.blog.viewmodel.getUpdatedBlogUri
 import com.bsrakdg.blogpost.ui.main.blog.viewmodel.onBlogPostUpdateSuccess
 import com.bsrakdg.blogpost.ui.main.blog.viewmodel.setUpdatedBlogFields
 import com.bsrakdg.blogpost.utils.Constants
+import com.bsrakdg.blogpost.utils.DataState
 import com.bsrakdg.blogpost.utils.ErrorHandling
 import com.bsrakdg.blogpost.utils.ErrorHandling.Companion.ERROR_MUST_SELECT_IMAGE
+import com.bsrakdg.blogpost.utils.Response
 import com.bumptech.glide.RequestManager
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
