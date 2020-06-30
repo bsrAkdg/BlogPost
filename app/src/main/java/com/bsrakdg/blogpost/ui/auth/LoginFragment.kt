@@ -2,74 +2,58 @@ package com.bsrakdg.blogpost.ui.auth
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.di.auth.AuthScope
-import com.bsrakdg.blogpost.ui.auth.state.AuthStateEvent.LoginAttemptEvent
+import com.bsrakdg.blogpost.ui.auth.state.AuthStateEvent
 import com.bsrakdg.blogpost.ui.auth.state.LoginFields
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
+
+@FlowPreview
+@ExperimentalCoroutinesApi
 @AuthScope
 class LoginFragment
 @Inject
 constructor(
-    private val viewModelFactory: ViewModelProvider.Factory
-) : Fragment(R.layout.fragment_login) {
-
-    val viewModel: AuthViewModel by viewModels { // new way initialize viewModel
-        viewModelFactory
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.cancelActiveJobs()
-    }
+    viewModelFactory: ViewModelProvider.Factory
+) : BaseAuthFragment(R.layout.fragment_login, viewModelFactory) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        subscribeObserver()
+        subscribeObservers()
 
-        // main activity navigate example
         login_button.setOnClickListener {
             login()
         }
+
+    }
+
+    fun subscribeObservers() {
+        viewModel.viewState.observe(viewLifecycleOwner, Observer {
+            it.loginFields?.let {
+                it.login_email?.let { input_email.setText(it) }
+                it.login_password?.let { input_password.setText(it) }
+            }
+        })
     }
 
     fun login() {
-        // Trigger state event on view model, view model has already subscribe state events changes
-        // and then view model handles this event
+        saveLoginFields()
         viewModel.setStateEvent(
-            LoginAttemptEvent(
+            AuthStateEvent.LoginAttemptEvent(
                 input_email.text.toString(),
                 input_password.text.toString()
             )
         )
     }
 
-    private fun subscribeObserver() {
-        viewModel.viewState.observe(viewLifecycleOwner, Observer { authViewState ->
-            authViewState.loginFields?.let { loginFields ->
-
-                // For configuration change
-                loginFields.login_email?.let { email ->
-                    input_email.setText(email)
-                }
-
-                loginFields.login_password?.let { password ->
-                    input_password.setText(password)
-                }
-            }
-        })
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // for return back
+    private fun saveLoginFields() {
         viewModel.setLoginFields(
             LoginFields(
                 input_email.text.toString(),
@@ -77,4 +61,10 @@ constructor(
             )
         )
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        saveLoginFields()
+    }
+
 }
