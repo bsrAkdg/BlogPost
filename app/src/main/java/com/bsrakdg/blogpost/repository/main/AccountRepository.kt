@@ -7,7 +7,6 @@ import com.bsrakdg.blogpost.di.main.MainScope
 import com.bsrakdg.blogpost.models.AccountProperties
 import com.bsrakdg.blogpost.models.AuthToken
 import com.bsrakdg.blogpost.persistence.AccountPropertiesDao
-import com.bsrakdg.blogpost.repository.JobManager
 import com.bsrakdg.blogpost.repository.NetworkBoundResource
 import com.bsrakdg.blogpost.session.SessionManager
 import com.bsrakdg.blogpost.ui.main.account.state.AccountViewState

@@ -11,7 +11,6 @@ import com.bsrakdg.blogpost.models.AuthToken
 import com.bsrakdg.blogpost.models.BlogPost
 import com.bsrakdg.blogpost.persistence.BlogPostDao
 import com.bsrakdg.blogpost.persistence.returnOrderedBlogQuery
-import com.bsrakdg.blogpost.repository.JobManager
 import com.bsrakdg.blogpost.repository.NetworkBoundResource
 import com.bsrakdg.blogpost.session.SessionManager
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
