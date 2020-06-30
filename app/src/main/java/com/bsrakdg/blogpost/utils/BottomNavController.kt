@@ -24,8 +24,7 @@ import kotlinx.android.parcel.Parcelize
  * https://stackoverflow.com/a/54505502
  * @property navigationBackStack: Backstack for the bottom navigation
  */
-const val BOTTOM_NAV_BACK_STACK_KEY =
-    "com.codingwithmitch.openapi.util.BottomNavController.bottom_nav_backstack"
+const val BOTTOM_NAV_BACK_STACK_KEY = "com.bsrakdg.blogpost.utils.BottomNavController.bottom_nav_backstack"
 
 class BottomNavController(
     val context: Context,

@@ -7,8 +7,10 @@ import com.bsrakdg.blogpost.ui.main.blog.BlogFragment
 import com.bsrakdg.blogpost.ui.main.blog.UpdateBlogFragment
 import com.bsrakdg.blogpost.ui.main.blog.ViewBlogFragment
 import com.bumptech.glide.RequestManager
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
+@FlowPreview
 @MainScope
 class BlogFragmentFactory
 @Inject

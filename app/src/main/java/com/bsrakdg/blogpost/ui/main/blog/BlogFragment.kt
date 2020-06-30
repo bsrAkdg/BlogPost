@@ -49,7 +49,7 @@ class BlogFragment
 @Inject
 constructor(
     viewModelFactory: ViewModelProvider.Factory,
-    private val requestOptions: RequestOptions
+    requestManager: RequestManager
 ) : BaseBlogFragment(R.layout.fragment_blog, viewModelFactory),
     BlogListAdapter.Interaction,
     SwipeRefreshLayout.OnRefreshListener {
