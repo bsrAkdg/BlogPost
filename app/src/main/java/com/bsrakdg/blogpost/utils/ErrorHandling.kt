@@ -1,9 +1,14 @@
 package com.bsrakdg.blogpost.utils
 
-class ErrorHandling {
+import android.util.Log
+import org.json.JSONException
+import org.json.JSONObject
+
+class ErrorHandling{
+
     companion object{
 
-        private val TAG: String = "ErrorHandling"
+        private val TAG: String = "AppDebug"
 
         const val UNABLE_TO_RESOLVE_HOST = "Unable to resolve host"
         const val UNABLE_TODO_OPERATION_WO_INTERNET = "Can't do that operation without an internet connection"
@@ -14,7 +19,7 @@ class ErrorHandling {
         const val ERROR_MUST_SELECT_IMAGE = "You must select an image."
 
         const val GENERIC_AUTH_ERROR = "Error"
-        const val INVALID_PAGE = "Invalid page."
+        const val PAGINATION_DONE_ERROR = "Invalid page."
         const val ERROR_CHECK_NETWORK_CONNECTION = "Check network connection."
         const val ERROR_UNKNOWN = "Unknown error"
         const val INVALID_CREDENTIALS = "Invalid credentials"
@@ -34,9 +39,25 @@ class ErrorHandling {
             }
         }
 
+        fun parseDetailJsonResponse(rawJson: String?): String{
+            Log.d(TAG, "parseDetailJsonResponse: ${rawJson}")
+            try{
+                if(!rawJson.isNullOrBlank()){
+                    if(rawJson.equals(ERROR_CHECK_NETWORK_CONNECTION)){
+                        return PAGINATION_DONE_ERROR
+                    }
+                    return JSONObject(rawJson).get("detail") as String
+                }
+            }catch (e: JSONException){
+                Log.e(TAG, "parseDetailJsonResponse: ${e.message}")
+            }
+            return ""
+        }
+
         fun isPaginationDone(errorResponse: String?): Boolean{
             // if error response = '{"detail":"Invalid page."}' then pagination is finished
-            return errorResponse?.contains(INVALID_PAGE)?: false
+            return PAGINATION_DONE_ERROR.equals(parseDetailJsonResponse(errorResponse))
         }
     }
+
 }
