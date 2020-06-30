@@ -11,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.bsrakdg.blogpost.R
-import com.bsrakdg.blogpost.ui.DataStateChangeListener
 import com.bsrakdg.blogpost.ui.UICommunicationListener
 
 abstract class BaseBlogFragment

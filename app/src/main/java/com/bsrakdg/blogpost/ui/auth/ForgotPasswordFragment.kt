@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bsrakdg.blogpost.R
 import com.bsrakdg.blogpost.di.auth.AuthScope
-import com.bsrakdg.blogpost.ui.DataStateChangeListener
 import com.bsrakdg.blogpost.utils.Constants
 import com.bsrakdg.blogpost.utils.DataState
 import com.bsrakdg.blogpost.utils.Response

@@ -119,7 +119,7 @@ class MainActivity : BaseActivity(),
 
     private fun subscribeObservers() {
         sessionManager.cachedToken.observe(this, Observer { authToken ->
-            Log.d(TAG, "MainActivity: subscribeObservers: AuthToken: $authToken")
+            Log.d(tag, "MainActivity: subscribeObservers: AuthToken: $authToken")
             if (authToken == null || authToken.account_pk == -1 || authToken.token == null) {
                 navAuthActivity()
                 finish()

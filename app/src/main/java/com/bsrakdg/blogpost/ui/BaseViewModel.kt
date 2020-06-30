@@ -1,35 +1,68 @@
 package com.bsrakdg.blogpost.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import com.bsrakdg.blogpost.utils.DataChannelManager
 import com.bsrakdg.blogpost.utils.DataState
+import com.bsrakdg.blogpost.utils.StateEvent
+import com.bsrakdg.blogpost.utils.StateMessage
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 
-abstract class BaseViewModel<StateEvent, ViewState> : ViewModel() {
 
-    val TAG: String = "BaseViewModel"
+@FlowPreview
+@ExperimentalCoroutinesApi
+abstract class BaseViewModel<ViewState> : ViewModel() {
+    val TAG: String = "AppDebug"
 
-    // _fieldName is recommended
-    protected val _stateEvent: MutableLiveData<StateEvent> = MutableLiveData() // event
-    protected val _viewState: MutableLiveData<ViewState> = MutableLiveData() // data
+    private val _viewState: MutableLiveData<ViewState> = MutableLiveData()
 
-    // for update UI
-    val viewState: LiveData<ViewState>
-        get() = _viewState
+    val dataChannelManager: DataChannelManager<ViewState> =
+        object : DataChannelManager<ViewState>() {
 
-    // for receive response by fragments, activity
-    val dataState: LiveData<DataState<ViewState>> =
-        Transformations.switchMap(_stateEvent) { stateEvent ->
-
-            stateEvent?.let {
-                handleStateEvent(stateEvent)
+            override fun handleNewData(data: ViewState) {
+                this@BaseViewModel.handleNewData(data)
             }
         }
 
-    // This method calls for UI events, if state event changes, view model handle it (handleStateEvent)
-    fun setStateEvent(event: StateEvent) {
-        _stateEvent.value = event
+    val viewState: LiveData<ViewState>
+        get() = _viewState
+
+    val numActiveJobs: LiveData<Int> = dataChannelManager.numActiveJobs
+
+    val stateMessage: LiveData<StateMessage?>
+        get() = dataChannelManager.messageStack.stateMessage
+
+    // FOR DEBUGGING
+    fun getMessageStackSize(): Int {
+        return dataChannelManager.messageStack.size
+    }
+
+    fun setupChannel() = dataChannelManager.setupChannel()
+
+    abstract fun handleNewData(data: ViewState)
+
+    abstract fun setStateEvent(stateEvent: StateEvent)
+
+    fun launchJob(
+        stateEvent: StateEvent,
+        jobFunction: Flow<DataState<ViewState>>
+    ) {
+        dataChannelManager.launchJob(stateEvent, jobFunction)
+    }
+
+    fun areAnyJobsActive(): Boolean {
+        return dataChannelManager.numActiveJobs.value?.let {
+            it > 0
+        } ?: false
+    }
+
+    fun isJobAlreadyActive(stateEvent: StateEvent): Boolean {
+        Log.d(TAG, "isJobAlreadyActive?: ${dataChannelManager.isJobAlreadyActive(stateEvent)} ")
+        return dataChannelManager.isJobAlreadyActive(stateEvent)
     }
 
     fun getCurrentViewStateOrNew(): ViewState {
@@ -43,9 +76,17 @@ abstract class BaseViewModel<StateEvent, ViewState> : ViewModel() {
         _viewState.value = viewState
     }
 
+    fun clearStateMessage(index: Int = 0) {
+        dataChannelManager.clearStateMessage(index)
+    }
+
+    open fun cancelActiveJobs() {
+        if (areAnyJobsActive()) {
+            Log.d(TAG, "cancel active jobs: ${dataChannelManager.numActiveJobs.value ?: 0}")
+            dataChannelManager.cancelJobs()
+        }
+    }
+
     abstract fun initNewViewState(): ViewState
-
-    abstract fun handleStateEvent(stateEvent: StateEvent): LiveData<DataState<ViewState>>
-
 
 }

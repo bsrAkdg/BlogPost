@@ -92,7 +92,7 @@ class AuthActivity : BaseActivity() {
                 data.data?.let { event ->
                     event.getContentIfNotHandled()?.let { authViewState ->
                         authViewState.authToken?.let { authToken ->
-                            Log.d(TAG, "AuthActivity, DataState: $authToken")
+                            Log.d(tag, "AuthActivity, DataState: $authToken")
                             viewModel.setAuthToken(authToken)
                         }
                     }
@@ -110,14 +110,14 @@ class AuthActivity : BaseActivity() {
         })
 
         viewModel.viewState.observe(this, Observer {
-            Log.d(TAG, "AuthActivity, subscribeObservers: AuthViewState: ${it}")
+            Log.d(tag, "AuthActivity, subscribeObservers: AuthViewState: ${it}")
             it.authToken?.let {
                 sessionManager.login(it)
             }
         })
 
         sessionManager.cachedToken.observe(this, Observer { dataState ->
-            Log.d(TAG, "AuthActivity, subscribeObservers: AuthDataState: ${dataState}")
+            Log.d(tag, "AuthActivity, subscribeObservers: AuthDataState: ${dataState}")
             dataState.let { authToken ->
                 if (authToken != null && authToken.account_pk != -1 && authToken.token != null) {
                     navMainActivity()
