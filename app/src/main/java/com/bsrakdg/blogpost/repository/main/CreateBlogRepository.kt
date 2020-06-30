@@ -14,7 +14,6 @@ import com.bsrakdg.blogpost.ui.DataState
 import com.bsrakdg.blogpost.ui.Response
 import com.bsrakdg.blogpost.ui.ResponseType
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogViewState
-import com.bsrakdg.blogpost.utils.AbsentLiveData
 import com.bsrakdg.blogpost.utils.ApiSuccessResponse
 import com.bsrakdg.blogpost.utils.DateConvertUtils
 import com.bsrakdg.blogpost.utils.GenericApiResponse

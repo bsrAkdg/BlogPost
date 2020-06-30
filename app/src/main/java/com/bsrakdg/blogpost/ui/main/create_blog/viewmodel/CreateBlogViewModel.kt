@@ -11,7 +11,6 @@ import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogStateEvent
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogStateEvent.CreateNewBlogEvent
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogStateEvent.None
 import com.bsrakdg.blogpost.ui.main.create_blog.state.CreateBlogViewState
-import com.bsrakdg.blogpost.utils.AbsentLiveData
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import javax.inject.Inject

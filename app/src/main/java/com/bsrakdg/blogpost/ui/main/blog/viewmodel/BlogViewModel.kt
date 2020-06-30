@@ -11,7 +11,6 @@ import com.bsrakdg.blogpost.ui.Loading
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogStateEvent.*
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
-import com.bsrakdg.blogpost.utils.AbsentLiveData
 import com.bsrakdg.blogpost.utils.PreferenceKeys.Companion.BLOG_FILTER
 import com.bsrakdg.blogpost.utils.PreferenceKeys.Companion.BLOG_ORDER
 import okhttp3.MediaType

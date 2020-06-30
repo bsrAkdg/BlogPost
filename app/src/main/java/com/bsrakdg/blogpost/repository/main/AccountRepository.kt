@@ -1,7 +1,6 @@
 package com.bsrakdg.blogpost.repository.main
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.switchMap
 import com.bsrakdg.blogpost.api.GenericResponse
 import com.bsrakdg.blogpost.api.main.BlogPostMainService
 import com.bsrakdg.blogpost.di.main.MainScope
@@ -15,7 +14,6 @@ import com.bsrakdg.blogpost.ui.DataState
 import com.bsrakdg.blogpost.ui.Response
 import com.bsrakdg.blogpost.ui.ResponseType
 import com.bsrakdg.blogpost.ui.main.account.state.AccountViewState
-import com.bsrakdg.blogpost.utils.AbsentLiveData
 import com.bsrakdg.blogpost.utils.ApiSuccessResponse
 import com.bsrakdg.blogpost.utils.GenericApiResponse
 import kotlinx.coroutines.Dispatchers.Main

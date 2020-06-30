@@ -10,7 +10,6 @@ import com.bsrakdg.blogpost.ui.Loading
 import com.bsrakdg.blogpost.ui.main.account.state.AccountStateEvent
 import com.bsrakdg.blogpost.ui.main.account.state.AccountStateEvent.*
 import com.bsrakdg.blogpost.ui.main.account.state.AccountViewState
-import com.bsrakdg.blogpost.utils.AbsentLiveData
 import javax.inject.Inject
 
 class AccountViewModel

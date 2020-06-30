@@ -20,7 +20,6 @@ import com.bsrakdg.blogpost.ui.ResponseType
 import com.bsrakdg.blogpost.ui.auth.state.AuthViewState
 import com.bsrakdg.blogpost.ui.auth.state.LoginFields
 import com.bsrakdg.blogpost.ui.auth.state.RegistrationFields
-import com.bsrakdg.blogpost.utils.AbsentLiveData
 import com.bsrakdg.blogpost.utils.ApiSuccessResponse
 import com.bsrakdg.blogpost.utils.ErrorHandling.Companion.ERROR_SAVE_AUTH_TOKEN
 import com.bsrakdg.blogpost.utils.ErrorHandling.Companion.GENERIC_AUTH_ERROR

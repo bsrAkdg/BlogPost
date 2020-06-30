@@ -2,7 +2,6 @@ package com.bsrakdg.blogpost.repository.main
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.switchMap
 import com.bsrakdg.blogpost.api.GenericResponse
 import com.bsrakdg.blogpost.api.main.BlogPostMainService
 import com.bsrakdg.blogpost.api.main.network_responses.BlogCreateUpdateResponse
@@ -19,7 +18,6 @@ import com.bsrakdg.blogpost.ui.DataState
 import com.bsrakdg.blogpost.ui.Response
 import com.bsrakdg.blogpost.ui.ResponseType
 import com.bsrakdg.blogpost.ui.main.blog.state.BlogViewState
-import com.bsrakdg.blogpost.utils.AbsentLiveData
 import com.bsrakdg.blogpost.utils.ApiSuccessResponse
 import com.bsrakdg.blogpost.utils.Constants.Companion.PAGINATION_PAGE_SIZE
 import com.bsrakdg.blogpost.utils.DateConvertUtils

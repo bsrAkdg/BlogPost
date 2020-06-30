@@ -1,6 +1,5 @@
 package com.bsrakdg.blogpost.persistence
 
-import androidx.lifecycle.LiveData
 import com.bsrakdg.blogpost.models.BlogPost
 import com.bsrakdg.blogpost.persistence.BlogQueryUtils.Companion.ORDER_BY_ASC_DATE_UPDATED
 import com.bsrakdg.blogpost.persistence.BlogQueryUtils.Companion.ORDER_BY_ASC_USERNAME
@@ -25,11 +24,11 @@ class BlogQueryUtils {
 }
 
 
-fun BlogPostDao.returnOrderedBlogQuery(
+suspend fun BlogPostDao.returnOrderedBlogQuery(
     query: String,
     filterAndOrder: String,
     page: Int
-): LiveData<List<BlogPost>> {
+): List<BlogPost> {
 
     when{
 

@@ -10,7 +10,6 @@ import com.bsrakdg.blogpost.persistence.AppDatabase
 import com.bsrakdg.blogpost.persistence.AppDatabase.Companion.DATABASE_NAME
 import com.bsrakdg.blogpost.persistence.AuthTokenDao
 import com.bsrakdg.blogpost.utils.Constants
-import com.bsrakdg.blogpost.utils.LiveDataCallAdapterFactory
 import com.bsrakdg.blogpost.utils.PreferenceKeys
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
@@ -64,7 +63,6 @@ object AppModule {
     ): Retrofit.Builder {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
-            .addCallAdapterFactory(LiveDataCallAdapterFactory()) // Convert from Call to LiveData
             .addConverterFactory(GsonConverterFactory.create(gson))
     }
 
